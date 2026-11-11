@@ -19,34 +19,39 @@ you make the calls.
   [Claude Code](https://claude.com/claude-code) (terminal, desktop app or IDE). Anything
   that reads `AGENTS.md` can follow the rules.
 
-## 1. Make your repo
+## 1. One prompt
 
-Click **Use this template** on GitHub › **Private** repository › clone it:
+Open Claude Code in the folder where you keep projects and paste:
 
-```bash
-git clone https://github.com/<you>/my-home.git && cd my-home
-python3 -m pip install pyyaml
-git config core.hooksPath .githooks
-cp .secrets-denylist.example .secrets-denylist   # then add your surname, street, postcode…
-python3 tools/doctor.py
+```text
+Set up HA Agent Kit for my Home Assistant: make me a private copy of
+https://github.com/deanlongstaff/ha-agent-kit called my-home, then follow its
+.claude/skills/ha-onboard/SKILL.md
 ```
 
-## 2. Connect the agent
+Say it's a **new** install when it asks. The `ha-onboard` skill then:
 
-Follow [mcp-setup.md](mcp-setup.md) to install ha-mcp and add it to your agent at user
-scope. Start with the `/readonly` URL if you like — Path A needs write access from step 4.
+1. creates your **private** repo and installs what it needs (privately, inside the repo);
+2. asks about your home — install type, local address, built-in automations or Node-RED;
+3. builds your privacy denylist with you;
+4. walks you through installing **ha-mcp** in Home Assistant, then has you run
+   `bash tools/connect-mcp.sh` in your own terminal so the secret URL never touches the chat
+   (details: [mcp-setup.md](mcp-setup.md));
+5. after one restart (*"continue onboarding"*), exports your fresh install, writes your
+   house docs and makes the first commits.
 
-## 3. Let the agent onboard you
+Path A needs write access for the foundations below, so say **no** to read-only when
+`connect-mcp.sh` asks — or start read-only and re-run it later.
 
-Open the repo in your agent and say:
+<details>
+<summary>By hand instead</summary>
 
-> **Set up this repo for my new Home Assistant.**
+**Use this template** → **Private** → clone → `bash tools/setup.sh` → install ha-mcp →
+`bash tools/connect-mcp.sh` → `claude` → *"continue onboarding"*.
 
-The `ha-onboard` skill takes over. It checks your setup, asks a short set of questions
-(who lives here, which rooms, phones for notifications, what you want automated first),
-then fills in `docs/home.md` and makes the first export and commit.
+</details>
 
-## 4. Lay the foundations (in this order)
+## 2. Lay the foundations (in this order)
 
 Ask for each step; the agent proposes, you approve, it builds and commits.
 
@@ -75,7 +80,7 @@ Ask for each step; the agent proposes, you approve, it builds and commits.
    [design rules](../dashboards.md#design-rules), screenshots it at phone and desktop width,
    and writes the look it chose into `docs/style-guide.md` so every later card matches.
 
-## 5. Keep going
+## 3. Keep going
 
 Every change follows the same loop, so your repo always mirrors the house. Browse
 [prompts.md](prompts.md) for ideas. When something breaks, ask *"what changed recently

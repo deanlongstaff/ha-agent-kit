@@ -40,7 +40,8 @@ git status --short && git diff --stat
 python3 tools/check_secrets.py && python3 tools/validate.py
 ```
 
-- `sync.py` needs PyYAML (`python3 -m pip install pyyaml`).
+- `sync.py` needs PyYAML; if it says it's missing, run `bash tools/setup.sh` (it installs it
+  privately in `.venv`, which the tools then use automatically).
 - "Payload truncated" → collect again; save the result to a file rather than copying it.
 - **Unexpected diffs** (things you didn't change) are the owner's manual changes or
   another session's. Commit them separately first as `chore(sync): …` — never revert them.

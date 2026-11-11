@@ -20,11 +20,10 @@ from __future__ import annotations
 import json, re, sys
 from pathlib import Path
 
-try:
-    import yaml
-except ImportError:
-    sys.exit("automation_lint: PyYAML is missing — run: python3 -m pip install pyyaml")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _env import ensure_yaml  # noqa: E402
 
+yaml = ensure_yaml()
 ROOT = Path(__file__).resolve().parent.parent
 HA = ROOT / "homeassistant"
 BASELINE = ROOT / "tools" / "automation_baseline.json"

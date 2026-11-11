@@ -31,7 +31,11 @@ try:
     import yaml  # noqa: F401
     add(OK, "PyYAML installed")
 except ImportError:
-    add(FAIL, "PyYAML missing", f"{sys.executable} -m pip install pyyaml")
+    venv = next((p for p in (ROOT / ".venv" / "bin" / "python", ROOT / ".venv" / "Scripts" / "python.exe") if p.exists()), None)
+    if venv and subprocess.run([str(venv), "-c", "import yaml"], capture_output=True).returncode == 0:
+        add(OK, "PyYAML installed in the repo's .venv (tools use it automatically)")
+    else:
+        add(FAIL, "PyYAML missing", "bash tools/setup.sh")
 
 # Node (only for the terminal collector)
 node = run("node", "--version")
@@ -45,7 +49,7 @@ hooks = run("git", "config", "core.hooksPath")
 if hooks == ".githooks":
     add(OK, "pre-commit hook enabled (secret scan + validation)")
 else:
-    add(FAIL, "pre-commit hook not enabled", "git config core.hooksPath .githooks")
+    add(FAIL, "pre-commit hook not enabled", "bash tools/setup.sh")
 
 # Denylist
 deny = ROOT / ".secrets-denylist"
@@ -53,7 +57,7 @@ entries = [l for l in deny.read_text().splitlines() if l.strip() and not l.start
 if entries:
     add(OK, f".secrets-denylist has {len(entries)} entries")
 else:
-    add(WARN, "no personal denylist yet", "cp .secrets-denylist.example .secrets-denylist, then add your surname, street, postcode, Wi-Fi name…")
+    add(WARN, "personal denylist is empty", "add your surname, street, postcode, Wi-Fi name… to .secrets-denylist (onboarding helps)")
 
 # Things that must never be tracked
 tracked = run("git", "ls-files").splitlines()
@@ -78,7 +82,10 @@ elif shutil.which("gh"):
     info = run("gh", "repo", "view", "--json", "visibility,nameWithOwner")
     try:
         v = json.loads(info)
-        if v.get("visibility") == "PUBLIC":
+        if v.get("nameWithOwner", "").lower().endswith("/ha-agent-kit") and v.get("visibility") == "PUBLIC":
+            add(FAIL, f"origin is the public kit itself ({v['nameWithOwner']})",
+                "make your own private copy: ask your agent to 'set up HA Agent Kit', or: git remote remove origin")
+        elif v.get("visibility") == "PUBLIC":
             add(FAIL, f"{v['nameWithOwner']} is PUBLIC", "your home config should be private: gh repo edit --visibility private --accept-visibility-change-consequences")
         else:
             add(OK, f"{v['nameWithOwner']} is {v.get('visibility', '?').lower()}")
@@ -100,7 +107,7 @@ info = ROOT / "homeassistant" / "export-info.yaml"
 if info.exists():
     add(OK, "export present: " + " · ".join(l.strip() for l in info.read_text().splitlines() if l and not l.startswith("#")))
 else:
-    add(WARN, "nothing exported yet", "ask your agent to 'run the first sync', or see README › Quick start")
+    add(WARN, "nothing exported yet", "ask your agent to 'continue onboarding'")
 
 # Secret scan of the working tree
 if (ROOT / "tools" / "check_secrets.py").exists():

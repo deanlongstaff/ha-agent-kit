@@ -18,9 +18,10 @@ import base64, csv, gzip, io, json, re, shutil, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-import yaml
-
 sys.path.insert(0, str(Path(__file__).parent))
+from _env import ensure_yaml  # noqa: E402
+
+yaml = ensure_yaml()
 from nodered_build import build as build_flows  # noqa: E402
 from redact import redact_addon_options, redact_emails, redact_yaml_text  # noqa: E402
 

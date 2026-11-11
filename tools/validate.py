@@ -10,13 +10,11 @@
 import json, sys
 from pathlib import Path
 
-try:
-    import yaml
-except ImportError:
-    sys.exit("validate: PyYAML is missing — run: python3 -m pip install pyyaml")
-
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from _env import ensure_yaml  # noqa: E402
+
+yaml = ensure_yaml()
 from nodered_build import build  # noqa: E402
 from function_lint import check as check_functions  # noqa: E402
 from automation_lint import check as check_automations  # noqa: E402

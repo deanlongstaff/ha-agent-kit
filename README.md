@@ -55,50 +55,50 @@ The agent never edits files in the repo to change your house. It changes the **l
 through Home Assistant's own APIs (so HA validates everything), then **exports** the result.
 The repo can't drift into a fantasy version of your home.
 
-## 🚀 Quick start
+## 🚀 Quick start — one prompt
 
-You need: Home Assistant, Python 3.9+, git, and an AI coding agent
-([Claude Code](https://claude.com/claude-code) recommended — terminal, desktop app or IDE).
+You need Home Assistant and [Claude Code](https://claude.com/claude-code) (terminal,
+desktop app or IDE). That's it: the agent sets up everything else.
 
-**1. Make your own private copy**
+Open Claude Code in the folder where you keep projects and paste:
 
-Click **[Use this template](https://github.com/deanlongstaff/ha-agent-kit/generate)** →
-choose **Private** (🔒 important — [here's why](SECURITY.md#4-keep-your-home-repo-private)) → clone it.
-
-```bash
-git clone https://github.com/<you>/my-home.git && cd my-home
-python3 -m pip install pyyaml
-git config core.hooksPath .githooks
-cp .secrets-denylist.example .secrets-denylist
-python3 tools/doctor.py
+```text
+Set up HA Agent Kit for my Home Assistant: make me a private copy of
+https://github.com/deanlongstaff/ha-agent-kit called my-home, then follow its
+.claude/skills/ha-onboard/SKILL.md
 ```
 
-**2. Connect your agent to Home Assistant** — install [ha-mcp](https://github.com/homeassistant-ai/ha-mcp)
-and add it at user scope ([full guide](docs/guides/mcp-setup.md)):
+Then answer a few questions. ☕
 
-```bash
-claude mcp add --transport http --scope user home-assistant "http://<ha-ip>:9584/private_<secret>/readonly"
-```
+| Step | | Who |
+|---|---|---|
+| 1 | Creates your **private** repo | 🤖 |
+| 2 | Installs what's needed — inside the repo, nothing system-wide | 🤖 |
+| 3 | Asks about your home: new or existing, install type, built-in automations or Node-RED | 🙋 you answer |
+| 4 | Builds your privacy denylist (codes and PINs you type yourself) | 🙋 + 🤖 |
+| 5 | Walks you through connecting Home Assistant; you paste the secret URL into `bash tools/connect-mcp.sh` in your own terminal, never the chat | 🙋 + 🤖 |
+| 6 | Exports everything, checks it for personal data, makes the first commit | 🤖 |
+| 7 | Writes your house docs, asking only what it can't work out | 🤖 |
+| 8 | Pushes to a private GitHub repo and suggests what to do next | 🤖 |
 
-(`/readonly` = look but don't touch. Drop it when you're ready.)
-
-**3. Say hello**
-
-```bash
-claude
-```
-
-> **Set up this repo for my existing Home Assistant.**
->
-> *or*
->
-> **Set up this repo for my new Home Assistant.**
-
-The onboarding skill takes it from there. ☕ Here's roughly what that first session looks like:
+There's one restart in the middle (Claude Code picks up a new connection when it starts):
+open it again in your `my-home` folder and say ***"continue onboarding"***.
 
 <p align="center">
   <img src="assets/onboarding.svg" alt="Example onboarding session: health check, read-only connection, privacy denylist, first export of dashboards, automations, helpers and Node-RED tabs, then an initial snapshot commit" width="88%">
 </p>
+
+<details>
+<summary><b>Prefer to do it by hand?</b></summary>
+
+1. **[Use this template](https://github.com/deanlongstaff/ha-agent-kit/generate)** → **Private**
+   ([why](SECURITY.md#4-keep-your-home-repo-private)) → clone it and `cd` into it.
+2. `bash tools/setup.sh` — checks git and Python, installs PyYAML privately, enables the safety hook.
+3. Install [ha-mcp](https://github.com/homeassistant-ai/ha-mcp) in Home Assistant
+   ([guide](docs/guides/mcp-setup.md)), then `bash tools/connect-mcp.sh` to connect it to Claude Code.
+4. `claude`, then: ***"continue onboarding"***.
+
+</details>
 
 ## 🛤️ Pick your path
 
@@ -249,6 +249,8 @@ tools/
   automation_lint.py      house rules for HA automations and scripts
   function_lint.py        house rules for Node-RED function nodes
   doctor.py               setup checker
+  setup.sh                one-time local setup (private .venv, hooks, denylist)
+  connect-mcp.sh          connect Claude Code to ha-mcp; the URL never touches the chat
   update_kit.sh           pull kit updates without touching your home's files
 assets/                   the images in this README (onboarding removes them from your copy)
 ```
@@ -262,7 +264,7 @@ scenes, helpers, inventory) and, if you use it, `node-red/` (one file per tab).
 |---|---|
 | Home Assistant | 2026.8+ recommended (ha-mcp integration). HA OS / Supervised get the full export (add-ons, Node-RED, config files); Container / Core get everything else. |
 | Agent | Claude Code (skills auto-load). Other agents that read `AGENTS.md` (Codex, Cursor, Gemini CLI, Copilot…) can follow the rules and use the tools. |
-| Local tools | Python 3.9+ with PyYAML, git. Node 22+ only for the terminal collector. |
+| Local tools | git and Python 3.9+ (the agent checks and helps install them; PyYAML goes in a private `.venv`). Node 22+ only for the terminal collector. |
 | Optional | Node-RED add-on, Studio Code Server add-on (for raw config files), `gh` CLI. |
 
 ## 🔄 Updating the kit

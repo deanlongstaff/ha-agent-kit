@@ -6,46 +6,50 @@ along the way.
 
 **Time:** about 30 minutes to your first commit.
 
-## 1. Make your repo
+## 1. One prompt
 
-Click **Use this template** on GitHub › **Private** repository › clone it:
+Open Claude Code in the folder where you keep projects and paste:
 
-```bash
-git clone https://github.com/<you>/my-home.git && cd my-home
-python3 -m pip install pyyaml
-git config core.hooksPath .githooks
-cp .secrets-denylist.example .secrets-denylist   # then add your surname, street, postcode, Wi-Fi name…
-python3 tools/doctor.py
+```text
+Set up HA Agent Kit for my Home Assistant: make me a private copy of
+https://github.com/deanlongstaff/ha-agent-kit called my-home, then follow its
+.claude/skills/ha-onboard/SKILL.md
 ```
 
-Already keep your config in git? Use a **new** repo anyway, and keep the old one as an
-archive. This kit's layout is generated, and mixing the two gets confusing.
+Say it's an **existing** install when it asks.
 
-## 2. Connect the agent — read-only first
+Already keep your config in git? Let it create a **new** repo anyway, and keep the old one
+as an archive. This kit's layout is generated, and mixing the two gets confusing.
 
-Follow [mcp-setup.md](mcp-setup.md) and add ha-mcp with the **`/readonly`** URL. For the
-first session the agent can look at everything and change nothing.
+## 2. What onboarding does
 
-## 3. Onboard
+1. Creates your **private** repo and installs what it needs (privately, inside the repo).
+2. Asks about your home: install type, local address, built-in automations or Node-RED.
+3. Builds your privacy denylist with you.
+4. Walks you through installing **ha-mcp**, then has you run `bash tools/connect-mcp.sh` in your
+   own terminal — say **yes to read-only**, so for now the agent can look at everything and
+   change nothing. The secret URL never touches the chat ([mcp-setup.md](mcp-setup.md)).
+5. After one restart (*"continue onboarding"*): **exports everything** and shows you a
+   summary — dashboards, automations, helpers, Node-RED tabs, integrations.
+6. **Reviews the export for privacy before anything is committed**, and helps you extend
+   the denylist.
+7. Grandfathers what exists today, so the commit checks only apply to new work:
+   automations that break the [house rules](../automations.md#house-rules) and, with
+   Node-RED, large function nodes. That list is your improvement backlog.
+8. Makes the first commit, drafts `docs/home.md`, `docs/architecture.md` and your
+   dashboard style guide, and pushes to a private GitHub repo.
 
-Open the repo in your agent and say:
+<details>
+<summary>By hand instead</summary>
 
-> **Set up this repo for my existing Home Assistant.**
+**Use this template** → **Private** → clone → `bash tools/setup.sh` → install ha-mcp →
+`bash tools/connect-mcp.sh` → `claude` → *"continue onboarding"*.
 
-The `ha-onboard` skill will:
+</details>
 
-1. Check your setup (`tools/doctor.py`).
-2. **Export everything** (collect → sync) and show you a summary: how many dashboards,
-   automations, helpers, Node-RED tabs, integrations.
-3. **Review the export for privacy before anything is committed.** It greps for names,
-   addresses and anything your denylist should catch, and helps you extend the denylist.
-4. Make the first commit: `chore(sync): initial snapshot`.
-5. Draft `docs/home.md` and `docs/architecture.md` from the inventory, then ask you to
-   fill the gaps only you know (who lives here, what must never be touched).
-6. Grandfather what exists today, so the commit checks only apply to new work: automations
-   that break the [house rules](../automations.md#house-rules) (no description, `device_id`,
-   old syntax, long templates) and, with Node-RED, large function nodes. That list becomes
-   your improvement backlog.
+## 3. Your first look around
+
+> **Give me a tour of my setup.**
 
 ## 4. Get a health check (still read-only)
 

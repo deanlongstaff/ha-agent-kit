@@ -47,13 +47,24 @@ Other install methods (the add-on, Docker, `uvx`) are in the
 
 ### Start read-only (recommended for your first week)
 
-Append `/readonly` to the URL: `http://<ha-ip>:9584/private_<random>/readonly`. Your agent
+`bash tools/connect-mcp.sh` offers this; by hand, append `/readonly` to the URL:
+`http://<ha-ip>:9584/private_<random>/readonly`. Your agent
 can explore, audit and export, but every write is blocked. Swap to the full URL when you're
 comfortable with how it works.
 
 ### Connect Claude Code
 
-Add it at **user scope**, so the URL lives in your user config, not in the repo:
+From the repo folder, in **your own terminal**:
+
+```bash
+bash tools/connect-mcp.sh
+```
+
+It asks for the URL with hidden input, offers read-only mode, checks Home Assistant
+answers, and adds it at **user scope** — your user config, not the repo. The URL never
+passes through the agent's chat. Restart Claude Code afterwards.
+
+Or by hand (the URL ends up in your shell history):
 
 ```bash
 claude mcp add --transport http --scope user home-assistant "http://<ha-ip>:9584/private_<random>"

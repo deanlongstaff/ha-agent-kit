@@ -30,8 +30,9 @@ kit keeps that sane. The short version:
 
 ## 2. Credentials
 
-- **The ha-mcp connect URL is a credential.** Add it at *user* scope in your agent
-  (`claude mcp add --scope user …`). Never in a repo `.mcp.json`, an issue or a screenshot.
+- **The ha-mcp connect URL is a credential.** `bash tools/connect-mcp.sh` adds it at *user*
+  scope with hidden input, so it never passes through the agent's chat or your shell
+  history. The agent is denied running that script; you run it yourself. Never in a repo `.mcp.json`, an issue or a screenshot.
 - **Long-lived tokens** (only for `tools/collect-cli.mjs`) live in a git-ignored `.env` or,
   better, come from your password manager at run time.
 - **The agent never types passwords.** You log in to HA in the browser; you enter
