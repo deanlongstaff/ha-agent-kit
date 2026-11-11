@@ -1,6 +1,7 @@
 # Agent instructions
 
-You are working on a **live smart home**: Home Assistant (and, if installed, Node-RED).
+You are working on a **live smart home**: Home Assistant, with its own automations and,
+if installed, Node-RED.
 People live here. Lights, heating, locks and alarms you touch do real things.
 
 This repo is the **mirror and documentation** of that system. The live system is the
@@ -35,8 +36,10 @@ for this home's specifics (install type, URLs, people, notify targets, quirks).
    Deploy only the Node-RED nodes you changed. No drive-by "improvements" — suggest them.
 7. **Native first.** Native triggers, conditions and helpers over Jinja templates; native
    Node-RED nodes over big function nodes. A person must be able to read the automation
-   in the UI. Details in the `home-assistant-best-practices` skill and
-   [docs/node-red.md](docs/node-red.md).
+   in the UI. Details in [docs/automations.md](docs/automations.md),
+   [docs/node-red.md](docs/node-red.md) and the `home-assistant-best-practices` skill.
+   New automations go where [docs/home.md](docs/home.md#conventions-in-use) says (HA,
+   Node-RED, or the rule for choosing) — never the same behaviour in both.
 8. **Exposure is reach.** Anything exposed to Assist can be controlled by every AI or
    voice assistant connected to this home. Ask before exposing locks, alarms, garage
    doors, cameras, sirens or power to infrastructure. See [SECURITY.md](SECURITY.md).
@@ -55,7 +58,7 @@ In `.claude/skills/` (third-party ones are pinned and listed in
 | Task | Load |
 |---|---|
 | First run, or `docs/home.md` is still a template | `ha-onboard` |
-| Any HA request — load it first, before exploring | `home-assistant-best-practices` |
+| Any HA request — load it first, before exploring (automations, scripts, helpers, blueprints) | `home-assistant-best-practices` |
 | Exporting, committing, "sync", "back up to GitHub" | `ha-sync` |
 | Node-RED flows | `node-red` |
 | Dashboards with Bubble Card (optional style) | `ha-bubble-dashboard` |
@@ -78,7 +81,8 @@ node-red/            only if Node-RED is installed
   flows/<tab>.json   one importable file per tab
   functions/         GENERATED read-only .js mirrors of function nodes (for grep)
 docs/                hand-written docs + docs/reference/ (GENERATED, don't edit)
-tools/               collect.js, collect-cli.mjs, sync.py, check_secrets.py, validate.py, doctor.py
+tools/               collect.js, collect-cli.mjs, sync.py, check_secrets.py, validate.py,
+                     automation_lint.py, function_lint.py, doctor.py
 ```
 
 Use the repo to answer "where is X used?" before you touch X:
@@ -127,10 +131,17 @@ in", not "unavailable".
 byte-identical, save the whole config back. Take a screenshot at desktop and phone width
 afterwards if you can.
 
-**Automations.** Give every automation a clear `alias` and a `description` saying *why*
-it exists. Use `mode` deliberately. Reference entities by `entity_id`, never `device_id`.
-Shared rules (seasons, "evening", "someone home") become helpers that automations use,
-not templates copied between automations.
+**HA automations and scripts** ([docs/automations.md](docs/automations.md)):
+- Read the current config, write the **whole** automation back (`ha_config_set_automation`,
+  or `POST config/automation/config/<id>`); HA validates and reloads it. New ones need a
+  new unique `id`.
+- Every automation has an `alias` (what) and a `description` (why); `mode` chosen on
+  purpose; `entity_id`/`area_id`, never `device_id`; current syntax (`triggers`/`actions`);
+  no Jinja block over 10 lines — shared logic becomes a helper. `tools/automation_lint.py`
+  enforces these on commit.
+- Debug with traces (`ha_get_automation_traces`) before changing anything. Running an
+  automation by hand does the real thing: ask first.
+- Never edit `automations.yaml` on the host while the UI owns it.
 
 **Node-RED** (if installed — [docs/node-red.md](docs/node-red.md)):
 - Through ingress: `supervisor/api` `POST /ingress/session` → cookie `ingress_session`,

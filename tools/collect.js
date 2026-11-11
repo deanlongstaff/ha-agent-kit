@@ -82,6 +82,10 @@
   // ── automations / scripts / scenes (API copy; works on every install type) ─
   const states = Object.values(hass.states);
   out.automations = [];
+  // Automations without an id (old YAML, packages) can't be read through the API: list them so they aren't silently missed
+  out.automations_without_id = states.filter((s) => s.entity_id.startsWith('automation.') && !s.attributes.id)
+    .map((s) => ({ entity_id: s.entity_id, name: s.attributes.friendly_name, state: s.state }));
+  if (out.automations_without_id.length) errors.push(`${out.automations_without_id.length} automation(s) have no id and can't be exported via the API — see docs/reference/automations.md › Not exported`);
   for (const s of states.filter((s) => s.entity_id.startsWith('automation.') && s.attributes.id))
     out.automations.push(await safe(`automation ${s.entity_id}`, () => api('GET', `config/automation/config/${s.attributes.id}`)));
   out.scripts = {};

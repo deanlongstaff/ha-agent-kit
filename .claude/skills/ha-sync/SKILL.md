@@ -50,6 +50,12 @@ python3 tools/check_secrets.py && python3 tools/validate.py
   a rule in `check_secrets.py` if needed) and re-sync. For values that don't look secret
   (a surname, an alarm code), ask the owner to add them to `.secrets-denylist`. Never
   commit around it, never `--no-verify`.
+- **Automation lint fails** (`automation_lint.py`) on an automation or script you just
+  wrote → fix it (docs/automations.md#house-rules). A device-only trigger with no
+  entity: `python3 tools/automation_lint.py --allow <id> "<why>"`. On many pre-existing
+  ones → the first-sync `--baseline` was never run: run it once and commit it.
+- **"N automation(s) have no id"** → old YAML automations the API can't read. They're
+  listed in `docs/reference/automations.md`; mention it once, don't try to fix it unasked.
 - **Node-RED function lint fails** on a function you just wrote → make it smaller or
   native (docs/node-red.md); on one that existed before the kit → `--baseline` was
   never run: run `python3 tools/function_lint.py --baseline` once and commit it.

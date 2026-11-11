@@ -62,10 +62,15 @@ Ask for each step; the agent proposes, you approve, it builds and commits.
 5. **Integrations.** Add them yourself in the UI (they usually need logins). After each:
    *"I just added Hue — assign the new devices to areas and rename them to our conventions."*
 6. **Modes as helpers.** *"Create guest mode, vacation mode and a 'someone home' group."*
-7. **First automations.** Start small and useful: hallway motion lights, a leak alert,
+7. **Pick your automation engine.** Home Assistant's built-in automations are the simple
+   default: everything in one UI, traces and blueprints built in. Node-RED (an add-on) is
+   great if you think visually. Or both, with a rule for which goes where. See
+   [automations.md](../automations.md#ha-automations-or-node-red) — onboarding records
+   your choice in `docs/home.md`.
+8. **First automations.** Start small and useful: hallway motion lights, a leak alert,
    "everything off when the last person leaves". Each one gets an alias, a *why*, a
    commit, and a changelog line.
-8. **A dashboard.** *"Build a sections-view dashboard with one section per area."*
+9. **A dashboard.** *"Build a sections-view dashboard with one section per area."*
 
 ## 5. Keep going
 

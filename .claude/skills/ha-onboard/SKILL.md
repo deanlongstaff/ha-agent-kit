@@ -30,7 +30,10 @@ Ask:
 1. **New or existing** Home Assistant? (new = little or nothing configured yet)
 2. **Install type** — HA OS / Supervised (add-ons available) or Container / Core?
 3. **Local URL** — e.g. `http://homeassistant.local:8123` or `http://192.168.1.20:8123`.
-4. Do they use **Node-RED**?
+4. **How do they like to automate?** Home Assistant's built-in automations, Node-RED, or
+   both? (Explain in a sentence each if they're unsure — `docs/automations.md` § *HA
+   automations or Node-RED?* has the comparison. New installs: HA automations are the
+   simpler default; Node-RED is a fine choice for visual thinkers.)
 
 Then check access, best first:
 - `ha_*` tools available? Call a harmless read (`ha_get_overview` or `ha_search`) and
@@ -39,6 +42,9 @@ Then check access, best first:
 - No MCP: walk them through `docs/guides/mcp-setup.md`. They run `claude mcp add …`
   themselves (the URL is a secret), then restart the session. If they'd rather not, use
   the browser fallback (they log in) or the terminal collector.
+
+The answer to question 4 matters from here on: use their preferred engine for every
+example and suggestion, and skip Node-RED topics entirely if they don't use it.
 
 ## 3. Privacy first
 
@@ -69,8 +75,11 @@ denylist (the commit is then blocked until it's fixed — rename it in HA), or a
 Summarise what was exported: dashboards, automations, scripts, helpers, areas,
 integrations, Node-RED tabs. Something to be proud of — make it fun.
 
-If Node-RED is present: `python3 tools/function_lint.py --baseline` (grandfathers
-today's function nodes so the lint applies only to new ones).
+Grandfather what exists today, so the commit checks apply only to new work:
+`python3 tools/automation_lint.py --baseline`, and if Node-RED is present
+`python3 tools/function_lint.py --baseline`. Tell them how many were grandfathered —
+that's their improvement backlog. If the sync noted automations without an `id`, tell
+them they're listed in `docs/reference/automations.md` and can be brought in later.
 
 Commit: `chore(sync): initial snapshot`.
 
@@ -83,7 +92,9 @@ infer:
   (find candidates with `ha_search` / the entity list; confirm with the user).
 - Anything that looks dead but must stay (seasonal automations, sometimes-offline
   devices, wall-panel dashboards) → **Keep list**.
-- Where new automations should live: HA, Node-RED, or a rule for which goes where.
+- Where new automations should live (from step 2): HA, Node-RED, or a rule for which
+  goes where. Write it under *Conventions in use*. If they use only one, say so plainly
+  so agents never add the other.
 - Their naming conventions — offer `docs/conventions.md` as the default and note changes.
 
 Draft `docs/architecture.md` from `inventory/` (add-ons, main integrations, areas).
@@ -103,10 +114,12 @@ Commit: `docs: house profile and architecture`.
 **Existing install:** offer the read-only audit:
 *"Shall I audit your setup against the best practices and list findings in
 docs/known-issues.md, without changing anything?"* If yes, load
-`home-assistant-best-practices` and check: `device_id` in automations, templates where
-native triggers/conditions exist, automations without description or with default mode
-where it matters, entities without an area, unused helpers, things exposed to Assist that
-can unlock/open/disarm. Write findings, commit (`docs: initial audit`), and suggest
+`home-assistant-best-practices` and check: the automation lint's baseline (device_id,
+missing descriptions, old syntax, long templates), templates where native
+triggers/conditions exist, `mode` choices that drop or double-run triggers, automations
+without an `id`, near-duplicate automations that could be one blueprint, entities without
+an area, unused helpers, and things exposed to Assist that can unlock/open/disarm. With
+Node-RED: the function-lint baseline and any behaviour implemented in both engines. Write findings, commit (`docs: initial audit`), and suggest
 switching from the `/readonly` URL when they're ready to fix things.
 
 **New install:** walk the foundations in `docs/guides/new-install.md` §4 — one at a time,

@@ -30,7 +30,8 @@ Full list: [`inventory/integrations.yaml`](../homeassistant/inventory/integratio
 ## Where logic lives
 
 _Which behaviours are HA automations, which are Node-RED flows, which are blueprints,
-and why. Agents follow this when adding something new._
+and why. Agents follow this when adding something new. Generated lists:
+[reference/automations.md](reference/automations.md), [reference/node-red.md](reference/node-red.md)._
 
 ## Areas
 

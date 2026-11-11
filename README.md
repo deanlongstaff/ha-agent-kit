@@ -127,12 +127,30 @@ of what to improve. Fix things one commit at a time.
 </tr>
 </table>
 
+## 🧠 Built-in automations, Node-RED, or both
+
+Use whichever you love. The kit treats both as first-class, and onboarding asks which you
+prefer so the agent builds new things in the right place.
+
+| | 🏠 Home Assistant automations | 🔴 Node-RED |
+|---|---|---|
+| **Exported as** | One YAML file per automation, script and scene | One importable JSON file per tab |
+| **Generated reference** | Alias, mode, triggers and description of every automation | Every tab with node counts |
+| **House rules** | Description says why · `entity_id` not `device_id` · current syntax · short templates | Native nodes first · small, single-job function nodes |
+| **Checked on every commit** | `automation_lint.py` | `function_lint.py` + wiring check |
+| **Existing setups** | Today's automations are grandfathered; rules apply to new work | Same for today's function nodes |
+| **Guide** | [automations.md](docs/automations.md) | [node-red.md](docs/node-red.md) |
+
+Not sure? [Here's how to choose](docs/automations.md#ha-automations-or-node-red). Using
+both? Write the rule for which goes where in `docs/home.md`, and the agent sticks to it.
+
 ## ✨ What's included
 
 | | |
 |---|---|
 | 🔁 **The loop** | Snapshot → change → export → review → commit. Every AI change is one `git revert` away from undone. |
-| 📸 **A complete export** | Dashboards, automations, scripts, scenes, helpers, areas, devices, entities, integrations, add-ons and Node-RED flows — clean YAML/JSON, one file per thing. HA OS, Supervised, Container and Core. |
+| 📸 **A complete export** | Dashboards, automations, scripts, scenes, helpers, areas, devices, entities, integrations, add-ons and Node-RED flows — clean YAML/JSON, one file per thing. HA OS, Supervised, Container and Core. Old YAML automations it can't read are listed, not silently skipped. |
+| ✅ **Quality checks on every commit** | HA automations need a *why*, use `entity_id` and current syntax; Node-RED function nodes stay small. Existing work is grandfathered. |
 | 🛡️ **Four layers of secret protection** | Redaction, your personal denylist, a pre-commit hook, and CI with gitleaks. |
 | 📜 **Agent rules that hold up** | An [`AGENTS.md`](AGENTS.md) refined on a real, busy house: confirm before deleting, native-first, change only what was asked, never touch credentials. |
 | 🧭 **Guided onboarding** | Say *"set up this repo"* and the agent interviews you, connects, protects your privacy and makes the first commit. |
@@ -178,7 +196,8 @@ AGENTS.md                 the rules every agent follows (CLAUDE.md points here)
 SECURITY.md               the security model
 docs/
   home.md                 YOUR house: install, URLs, people, keep-list (filled by onboarding)
-  conventions.md          naming + automation conventions (sensible defaults)
+  conventions.md          naming, helper and notification conventions
+  automations.md          HA automation house rules; node-red.md for flows
   architecture.md …       templates for the human "why"
   guides/                 new install · existing install · MCP setup · prompt ideas
   reference/              generated on every sync
@@ -191,7 +210,9 @@ tools/
   collect-cli.mjs         …or from the terminal with a token
   sync.py  redact.py      turn the export into clean, redacted files
   check_secrets.py        secret + personal-data scanner (hook + CI)
-  validate.py             YAML/JSON/Node-RED wiring checks + function-node lint
+  validate.py             YAML/JSON/Node-RED wiring checks, runs both linters
+  automation_lint.py      house rules for HA automations and scripts
+  function_lint.py        house rules for Node-RED function nodes
   doctor.py               setup checker
   update_kit.sh           pull kit updates without touching your home's files
 assets/                   the images in this README (onboarding removes them from your copy)
@@ -240,8 +261,9 @@ Assistant's own encrypted, off-site backups too — the agent can help you set t
 <details>
 <summary><b>I don't use Node-RED. / I only use Node-RED.</b></summary>
 
-Both are fine. Without Node-RED the `node-red/` parts are simply skipped. With it, every
-tab is exported as an importable file, and the agent deploys only the nodes it changed.
+Both are fine — see [Built-in automations, Node-RED, or both](#-built-in-automations-node-red-or-both).
+Without Node-RED the `node-red/` parts are skipped and the agent never suggests it. With
+it, every tab is an importable file and the agent deploys only the nodes it changed.
 </details>
 
 <details>

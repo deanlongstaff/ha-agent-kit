@@ -35,16 +35,10 @@ note them here.
 
 ## Automations
 
-- Every automation has an `alias` (what) and a `description` (why).
-- Choose `mode` on purpose: `single` for one-shots, `restart` for "reset the timer"
-  (motion lights), `queued` when every trigger must run, `parallel` rarely.
-- Triggers and conditions use native options (`state`, `numeric_state`, `for:`, `sun`,
-  `zone`, `time`) before templates.
-- Anything time-limited ("off after 30 min", boosts) has a fail-safe that still works
-  after a restart.
-- Shared rules ("evening", "someone home", "season") are helpers — a `schedule`,
-  `tod`, template binary sensor or group — that automations trigger on.
-- Seasonal automations are disabled out of season, not deleted.
+House rules, the native-first table and how agents change automations:
+[automations.md](automations.md) (Home Assistant) and [node-red.md](node-red.md) (Node-RED).
+Both share the same ideas: a person can read it in the UI, shared rules are helpers,
+anything time-limited has a fail-safe, and seasonal automations are disabled, not deleted.
 
 ## Helpers
 

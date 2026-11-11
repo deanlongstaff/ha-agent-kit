@@ -5,6 +5,7 @@
 - every JSON file parses
 - node-red/ split files reassemble with no duplicate or dangling node ids
 - new function nodes stay small and don't read HA state directly (function_lint.py)
+- new automations and scripts follow the house rules (automation_lint.py)
 """
 import json, sys
 from pathlib import Path
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from nodered_build import build  # noqa: E402
 from function_lint import check as check_functions  # noqa: E402
+from automation_lint import check as check_automations  # noqa: E402
 
 
 class Loader(yaml.SafeLoader):
@@ -52,6 +54,9 @@ if (ROOT / "node-red" / "index.json").exists():
             for target in out:
                 if target not in known:
                     errors.append(f"node-red: {n['id']} ({n.get('name') or n['type']}) wires to missing node {target}")
+
+if (ROOT / "homeassistant" / "automations").exists() or (ROOT / "homeassistant" / "scripts").exists():
+    errors += check_automations()
 
 if errors:
     print("\n".join(errors))

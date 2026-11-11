@@ -42,16 +42,19 @@ The `ha-onboard` skill will:
 4. Make the first commit: `chore(sync): initial snapshot`.
 5. Draft `docs/home.md` and `docs/architecture.md` from the inventory, then ask you to
    fill the gaps only you know (who lives here, what must never be touched).
-6. If you use Node-RED, grandfather today's large function nodes so the lint only applies
-   to new ones.
+6. Grandfather what exists today, so the commit checks only apply to new work: automations
+   that break the [house rules](../automations.md#house-rules) (no description, `device_id`,
+   old syntax, long templates) and, with Node-RED, large function nodes. That list becomes
+   your improvement backlog.
 
 ## 4. Get a health check (still read-only)
 
 > **Audit my setup against the best practices and write the findings to docs/known-issues.md. Don't change anything.**
 
 Typical findings: automations using `device_id`, templates where a native trigger
-exists, entities with no area, duplicate or orphaned helpers, automations without a
-description, things exposed to Assist that shouldn't be. You decide what to fix, and when.
+exists, near-identical automations that could be one blueprint, `mode` choices that drop
+triggers, old YAML automations without an `id` (they can't be exported until they have
+one), entities with no area, orphaned helpers, things exposed to Assist that shouldn't be. You decide what to fix, and when.
 
 ## 5. Switch to full access and improve, one change at a time
 
@@ -64,6 +67,11 @@ Each change is snapshot → change → export → review → commit, so every on
 `git revert` away from undone.
 
 ## Tips
+
+- **HA automations, Node-RED, or both?** Onboarding asks and records your answer, so the
+  agent builds new things where you want them. Both get the same treatment: one file per
+  automation or tab, house rules checked on every commit, and a guide
+  ([automations.md](../automations.md), [node-red.md](../node-red.md)).
 
 - **Studio Code Server** (add-on) lets the collector also export `configuration.yaml` and
   ESPHome configs. Optional — start it when you want those, stop it afterwards.

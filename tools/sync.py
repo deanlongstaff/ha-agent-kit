@@ -351,11 +351,18 @@ def ref_automations(b: dict):
         rows.append(f"| {md_escape(a.get('alias'))} | `{a.get('id')}` | {a.get('mode') or 'single'} | {md_escape(', '.join(kinds))} | "
                     f"{md_escape((a.get('description') or '')[:120])} |")
     scripts = sorted((b.get("scripts") or {}).items())
+    missing = b.get("automations_without_id") or []
     out = [GEN + "# Automations and scripts (reference)\n\nOne YAML file each in `homeassistant/automations/`, `scripts/` and `scenes/`.\n",
            f"\n## Automations ({len(rows)})\n", "| Alias | ID | Mode | Triggers | Description |", "|---|---|---|---|---|", *rows,
            f"\n## Scripts ({len(scripts)})\n", "| Script | Alias | Mode | Description |", "|---|---|---|---|"]
     out += [f"| `script.{k}` | {md_escape((v or {}).get('alias'))} | {(v or {}).get('mode') or 'single'} | {md_escape(((v or {}).get('description') or '')[:120])} |"
             for k, v in scripts]
+    if missing:
+        out += [f"\n## Not exported ({len(missing)})\n",
+                "These automations have no `id` (old YAML or packages), so the API can't read them. "
+                "See [../automations.md](../automations.md#automations-that-cant-be-exported) for how to bring them in.\n",
+                "| Entity | Name | State |", "|---|---|---|"]
+        out += [f"| `{m['entity_id']}` | {md_escape(m.get('name'))} | {m.get('state')} |" for m in sorted(missing, key=lambda m: m["entity_id"])]
     write(REF / "automations.md", "\n".join(out) + "\n")
 
 

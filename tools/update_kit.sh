@@ -8,7 +8,7 @@
 #   .github/workflows/, .claude/skills/, docs/guides/, .gitleaks.toml, .env.example,
 #   .secrets-denylist.example
 # Yours (never touched): README.md, CHANGELOG.md, docs/*.md, homeassistant/, node-red/,
-#   tools/function_baseline.json, .claude/settings.local.json
+#   tools/function_baseline.json, tools/automation_baseline.json, .claude/settings.local.json
 #
 # Nothing is committed: review `git diff`, then commit as `chore(repo): update HA Agent Kit`.
 set -euo pipefail
@@ -21,10 +21,12 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 git fetch --quiet --depth 1 "$KIT_REPO" main
-baseline=$(mktemp); cp tools/function_baseline.json "$baseline" 2>/dev/null || echo '[]' > "$baseline"
+keep=$(mktemp -d)
+for f in function_baseline.json automation_baseline.json; do cp "tools/$f" "$keep/$f" 2>/dev/null || true; done
 git checkout FETCH_HEAD -- AGENTS.md CLAUDE.md SECURITY.md tools .githooks .github/workflows \
   .claude/skills docs/guides .gitleaks.toml .env.example .secrets-denylist.example .claude/settings.json
-cp "$baseline" tools/function_baseline.json && rm -f "$baseline"
+for f in function_baseline.json automation_baseline.json; do [ -f "$keep/$f" ] && cp "$keep/$f" "tools/$f"; done
+rm -rf "$keep"
 chmod +x .githooks/* tools/*.py tools/*.sh tools/*.mjs 2>/dev/null || true
 
 echo "Updated to kit $(git rev-parse --short FETCH_HEAD). Review:"
