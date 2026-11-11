@@ -22,9 +22,15 @@ jobs:
         run: python3 tools/check_secrets.py
       - name: Validate YAML, JSON and Node-RED wiring
         run: python3 tools/validate.py
+      # gitleaks CLI rather than gitleaks-action: it scans the whole history on every run
+      # (the action skips a new repo's first push) and needs no licence for organisations.
       - name: Gitleaks (full history)
-        uses: gitleaks/gitleaks-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Personal accounts need no licence. Organisation accounts: see
-          # https://github.com/gitleaks/gitleaks-action#environment-variables
+          GITLEAKS_VERSION: 8.24.3
+        run: |
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          file="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$file" "$base/$file"
+          curl -sSfL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " $file\$" | sed "s|$file|$RUNNER_TEMP/$file|" | sha256sum -c -
+          tar xzf "$RUNNER_TEMP/$file" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git . --config .gitleaks.toml --redact --verbose --exit-code 1
