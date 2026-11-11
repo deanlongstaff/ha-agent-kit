@@ -1,0 +1,21 @@
+# Local working files — never committed
+.export/
+.env
+.env.*
+!.env.example
+.secrets-denylist
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+node_modules/
+
+# Never commit these from the Home Assistant host
+secrets.yaml
+.storage/
+*.db
+*.db-*
+*.log
+flows_cred.json
+.flows_cred.json.backup
+.mcp.json

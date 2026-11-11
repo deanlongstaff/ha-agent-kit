@@ -1,0 +1,22 @@
+# Gitleaks config: default rules plus Home Assistant / ESPHome / ha-mcp specific ones.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "esphome-api-key"
+description = "ESPHome native API encryption key"
+regex = '''key:\s*["']?[A-Za-z0-9+/]{43}='''
+
+[[rules]]
+id = "ha-mcp-secret-url"
+description = "ha-mcp connect URL (the secret path is the credential)"
+regex = '''/private_[A-Za-z0-9_-]{12,}'''
+
+[[rules]]
+id = "ha-webhook-url"
+description = "Home Assistant webhook URL (anyone with it can trigger the webhook)"
+regex = '''/api/webhook/[A-Za-z0-9_-]{16,}'''
+
+[allowlist]
+description = "Vendored third-party skills contain example placeholders"
+paths = ['''^\.claude/skills/(home-assistant-best-practices|node-red|ha-bubble-dashboard)/''']

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./.secrets-denylist)",
+      "Read(**/secrets.yaml)",
+      "Read(**/flows_cred.json)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git push --force:*)"
+    ],
+    "allow": [
+      "Bash(python3 tools/sync.py:*)",
+      "Bash(python3 tools/check_secrets.py:*)",
+      "Bash(python3 tools/validate.py:*)",
+      "Bash(python3 tools/doctor.py:*)",
+      "Bash(node tools/collect-cli.mjs:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ]
+  }
+}

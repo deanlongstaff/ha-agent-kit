@@ -1,0 +1,30 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Secret and personal-data scan
+        run: python3 tools/check_secrets.py
+      - name: Validate YAML, JSON and Node-RED wiring
+        run: python3 tools/validate.py
+      - name: Gitleaks (full history)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Personal accounts need no licence. Organisation accounts: see
+          # https://github.com/gitleaks/gitleaks-action#environment-variables
