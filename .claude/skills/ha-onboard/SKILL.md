@@ -98,6 +98,10 @@ infer:
 - Their naming conventions — offer `docs/conventions.md` as the default and note changes.
 
 Draft `docs/architecture.md` from `inventory/` (add-ons, main integrations, areas).
+Existing install with dashboards: draft `docs/style-guide.md` from the main dashboard's
+YAML (theme, card family, layout, colours in use, two or three repeated card patterns
+with snippets) and fill the table in `docs/dashboards.md`. New install: leave the style
+guide for the first dashboard and fill it in then.
 Change `status: template` to `status: ready` in `docs/home.md`.
 
 Replace the kit's `README.md` with a short one for *their* home: a title, one paragraph,
@@ -118,7 +122,9 @@ docs/known-issues.md, without changing anything?"* If yes, load
 missing descriptions, old syntax, long templates), templates where native
 triggers/conditions exist, `mode` choices that drop or double-run triggers, automations
 without an `id`, near-duplicate automations that could be one blueprint, entities without
-an area, unused helpers, and things exposed to Assist that can unlock/open/disarm. With
+an area, unused helpers, things exposed to Assist that can unlock/open/disarm, dashboards
+against `docs/dashboards.md` (hex colours, unguarded locks/alarm, cards pointing at missing
+entities), and pending updates with known breaking changes. With
 Node-RED: the function-lint baseline and any behaviour implemented in both engines. Write findings, commit (`docs: initial audit`), and suggest
 switching from the `/readonly` URL when they're ready to fix things.
 

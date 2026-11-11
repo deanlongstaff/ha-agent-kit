@@ -66,6 +66,12 @@
   out.integrations = (await safe('config entries', () => ws({ type: 'config_entries/get' })))?.map((e) => ({ entry_id: e.entry_id,
     domain: e.domain, title: e.title, source: e.source, state: e.state, disabled_by: e.disabled_by }));
 
+  // Versions, so a sync diff shows exactly what was updated (and agents know which changelogs to read)
+  out.custom_integrations = (await safe('manifests', () => ws({ type: 'manifest/list' })))?.filter((m) => !m.is_built_in)
+    .map((m) => ({ domain: m.domain, name: m.name, version: m.version, documentation: m.documentation, overwrites_built_in: m.overwrites_built_in || undefined }));
+  out.installed_versions = Object.values(hass.states).filter((s) => s.entity_id.startsWith('update.') && s.attributes.installed_version)
+    .map((s) => ({ entity_id: s.entity_id, title: s.attributes.title || s.attributes.friendly_name, version: s.attributes.installed_version }));
+
   // UI helpers stored as config entries: read options through an options flow that is aborted (nothing is saved)
   out.entry_helpers = [];
   for (const e of (out.integrations || []).filter((e) => ENTRY_HELPER_DOMAINS.includes(e.domain))) {

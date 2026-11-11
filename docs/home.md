@@ -41,7 +41,7 @@ Use roles or first names only. Notify targets are service names, not secrets.
 ## Conventions in use
 
 - Entity naming: see [conventions.md](conventions.md)
-- Dashboards: _main dashboard and its look, e.g. "sections view, tile cards"_
+- Dashboards: _main dashboard and who uses which — the look is in [style-guide.md](style-guide.md)_
 - Automations live in: _HA automations / Node-RED / both — if both, the rule for which goes
   where (e.g. "room automations in HA, anything stateful in Node-RED")_
 

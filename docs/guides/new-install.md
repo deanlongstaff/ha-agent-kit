@@ -70,7 +70,10 @@ Ask for each step; the agent proposes, you approve, it builds and commits.
 8. **First automations.** Start small and useful: hallway motion lights, a leak alert,
    "everything off when the last person leaves". Each one gets an alias, a *why*, a
    commit, and a changelog line.
-9. **A dashboard.** *"Build a sections-view dashboard with one section per area."*
+9. **A dashboard.** *"Build me a phone-first home dashboard: things that need attention
+   at the top, then one section per area."* The agent follows the
+   [design rules](../dashboards.md#design-rules), screenshots it at phone and desktop width,
+   and writes the look it chose into `docs/style-guide.md` so every later card matches.
 
 ## 5. Keep going
 

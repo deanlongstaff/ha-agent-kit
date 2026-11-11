@@ -217,6 +217,14 @@ def sync_inventory(b: dict, themes: dict):
         [{"domain": e["domain"], "title": e["title"], "state": e["state"], **({"disabled_by": e["disabled_by"]} if e.get("disabled_by") else {})}
          for e in b.get("integrations") or []], key=lambda x: (x["domain"], x["title"] or ""))), "Integrations (config entries)")
     write_yaml(d / "addons.yaml", sorted(b.get("addons") or [], key=lambda a: a["slug"]), "Installed add-ons (state at export time)")
+    if b.get("custom_integrations") is not None or b.get("installed_versions") is not None:
+        write_yaml(d / "versions.yaml", redact_emails({
+            "home_assistant": (b.get("meta") or {}).get("ha_version"),
+            "custom_integrations": sorted([{k: v for k, v in m.items() if v is not None} for m in b.get("custom_integrations") or []],
+                                          key=lambda m: m["domain"]),
+            "installed": sorted(b.get("installed_versions") or [], key=lambda u: (u.get("title") or "").lower()),
+        }), "Installed versions: HA, custom integrations, and everything with an update entity (add-ons, Marketplace "
+            "items, firmware). When this changes, read the changelogs — AGENTS.md §7a")
     write_yaml(d / "themes.yaml", themes, "Themes known to the frontend")
     bp = {dom: sorted([{"path": p, "name": (v.get("metadata") or {}).get("name"), "source_url": (v.get("metadata") or {}).get("source_url")}
                        for p, v in (items or {}).items()], key=lambda x: x["path"]) for dom, items in (b.get("blueprints") or {}).items()}

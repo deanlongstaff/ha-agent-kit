@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="t d">
+  <title id="t">Dashboards with design rules built in</title>
+  <desc id="d">A phone dashboard designed by the agent, annotated with the design rules: attention first, one section per area, colour means state, guarded real-world actions, and screenshot checks at phone and desktop width.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#16213a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="560" rx="24" fill="url(#bg)"/>
+
+  <!-- phone -->
+  <rect x="88" y="26" width="324" height="508" rx="44" fill="#0f172a" stroke="#334155" stroke-width="3"/>
+  <rect x="100" y="38" width="300" height="484" rx="34" fill="#f4f6fb"/>
+  <rect x="210" y="48" width="80" height="18" rx="9" fill="#0f172a"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="122" y="62" fill="#0f172a" font-size="12" font-weight="700">9:41</text>
+
+    <text x="116" y="100" fill="#0f172a" font-size="21" font-weight="800">Good evening</text>
+    <text x="116" y="120" fill="#64748b" font-size="12">Thursday · 12° and cloudy · everyone home</text>
+
+    <!-- attention -->
+    <rect x="114" y="134" width="272" height="72" rx="14" fill="#fff7ed" stroke="#fdba74"/>
+    <circle cx="138" cy="158" r="12" fill="#f59e0b"/>
+    <path d="M134 152 L134 164 L143 164" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="158" y="155" fill="#7c2d12" font-size="13" font-weight="700">Back door open</text>
+    <text x="158" y="170" fill="#9a3412" font-size="11">12 min · tap for the camera</text>
+    <circle cx="138" cy="190" r="4" fill="#3b82f6"/>
+    <text x="158" y="194" fill="#1e3a8a" font-size="12" font-weight="600">Washing machine finished</text>
+
+    <!-- living room -->
+    <text x="116" y="230" fill="#334155" font-size="13" font-weight="800">Living room</text>
+    <g filter="url(#shadow)">
+      <rect x="114" y="240" width="132" height="56" rx="13" fill="#ffffff"/>
+      <rect x="254" y="240" width="132" height="56" rx="13" fill="#ffffff"/>
+    </g>
+    <circle cx="136" cy="268" r="12" fill="#fde68a"/><circle cx="136" cy="268" r="5" fill="#f59e0b"/>
+    <text x="155" y="264" fill="#0f172a" font-size="12" font-weight="700">Lights</text>
+    <text x="155" y="280" fill="#b45309" font-size="11">3 on</text>
+    <circle cx="276" cy="268" r="12" fill="#fed7aa"/><circle cx="276" cy="268" r="5" fill="#f97316"/>
+    <text x="295" y="264" fill="#0f172a" font-size="12" font-weight="700">Climate</text>
+    <text x="295" y="280" fill="#c2410c" font-size="11">21.5° · heating</text>
+
+    <!-- kitchen -->
+    <text x="116" y="322" fill="#334155" font-size="13" font-weight="800">Kitchen</text>
+    <g filter="url(#shadow)">
+      <rect x="114" y="332" width="132" height="56" rx="13" fill="#ffffff"/>
+      <rect x="254" y="332" width="132" height="56" rx="13" fill="#ffffff"/>
+    </g>
+    <circle cx="136" cy="360" r="12" fill="#e2e8f0"/><circle cx="136" cy="360" r="5" fill="#94a3b8"/>
+    <text x="155" y="356" fill="#0f172a" font-size="12" font-weight="700">Lights</text>
+    <text x="155" y="372" fill="#94a3b8" font-size="11">Off</text>
+    <circle cx="276" cy="360" r="12" fill="#bfdbfe"/><circle cx="276" cy="360" r="5" fill="#3b82f6"/>
+    <text x="295" y="356" fill="#0f172a" font-size="12" font-weight="700">Dishwasher</text>
+    <text x="295" y="372" fill="#1d4ed8" font-size="11">40 min left</text>
+
+    <!-- security -->
+    <text x="116" y="414" fill="#334155" font-size="13" font-weight="800">Security</text>
+    <g filter="url(#shadow)">
+      <rect x="114" y="424" width="132" height="56" rx="13" fill="#ffffff"/>
+      <rect x="254" y="424" width="132" height="56" rx="13" fill="#ffffff"/>
+    </g>
+    <circle cx="136" cy="452" r="12" fill="#bbf7d0"/>
+    <rect x="131" y="450" width="10" height="8" rx="1.5" fill="#16a34a"/>
+    <path d="M133 450 L133 447 Q136 443 139 447 L139 450" fill="none" stroke="#16a34a" stroke-width="1.8"/>
+    <text x="155" y="448" fill="#0f172a" font-size="12" font-weight="700">Front door</text>
+    <text x="155" y="464" fill="#15803d" font-size="11">Locked</text>
+    <circle cx="276" cy="452" r="12" fill="#bbf7d0"/>
+    <path d="M276 444 L283 447 L283 452 Q283 458 276 461 Q269 458 269 452 L269 447 Z" fill="#16a34a"/>
+    <text x="295" y="448" fill="#0f172a" font-size="12" font-weight="700">Alarm</text>
+    <text x="295" y="464" fill="#15803d" font-size="11">Armed home</text>
+
+    <rect x="200" y="504" width="100" height="5" rx="2.5" fill="#0f172a" fill-opacity="0.8"/>
+  </g>
+
+  <!-- leader lines -->
+  <g fill="none" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 5">
+    <path d="M390 170 C430 170 440 150 476 150"/>
+    <path d="M390 226 C430 226 440 222 476 222"/>
+    <path d="M390 360 C430 360 440 294 476 294"/>
+    <path d="M390 452 C430 452 440 366 476 366"/>
+  </g>
+
+  <!-- rules -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="476" y="72" fill="#41BDF5" font-size="14" font-weight="700" letter-spacing="2.8">DASHBOARDS TOO</text>
+    <text x="476" y="104" fill="#f1f5f9" font-size="26" font-weight="700">Twelve design rules, built in</text>
+
+    <circle cx="492" cy="150" r="15" fill="#F59E6B"/><text x="492" y="156" text-anchor="middle" fill="#0b1220" font-size="15" font-weight="800">1</text>
+    <text x="520" y="146" fill="#f1f5f9" font-size="19" font-weight="700">Attention first</text>
+    <text x="520" y="170" fill="#94a3b8" font-size="15">Only what needs you right now — and empty when all is well</text>
+
+    <circle cx="492" cy="222" r="15" fill="#41BDF5"/><text x="492" y="228" text-anchor="middle" fill="#0b1220" font-size="15" font-weight="800">2</text>
+    <text x="520" y="218" fill="#f1f5f9" font-size="19" font-weight="700">One section per area, phone first</text>
+    <text x="520" y="242" fill="#94a3b8" font-size="15">Same order everywhere, built for one hand, then wide screens</text>
+
+    <circle cx="492" cy="294" r="15" fill="#a78bfa"/><text x="492" y="300" text-anchor="middle" fill="#0b1220" font-size="15" font-weight="800">3</text>
+    <text x="520" y="290" fill="#f1f5f9" font-size="19" font-weight="700">Colour means state</text>
+    <text x="520" y="314" fill="#94a3b8" font-size="15">Theme colours only · idle is quiet, active stands out · light &amp; dark</text>
+
+    <circle cx="492" cy="366" r="15" fill="#22c55e"/><text x="492" y="372" text-anchor="middle" fill="#0b1220" font-size="15" font-weight="800">4</text>
+    <text x="520" y="362" fill="#f1f5f9" font-size="19" font-weight="700">Guard real-world actions</text>
+    <text x="520" y="386" fill="#94a3b8" font-size="15">Locks, alarm and “all off” ask before they act</text>
+
+    <circle cx="492" cy="438" r="15" fill="#38bdf8"/><text x="492" y="444" text-anchor="middle" fill="#0b1220" font-size="15" font-weight="800">5</text>
+    <text x="520" y="434" fill="#f1f5f9" font-size="19" font-weight="700">Checked by eye, every change</text>
+    <text x="520" y="458" fill="#94a3b8" font-size="15">Screenshots at phone and desktop width before it says “done”</text>
+
+    <text x="476" y="508" fill="#64748b" font-size="14">…and your own look recorded in a style guide, so card #50 matches card #1.</text>
+  </g>
+</svg>

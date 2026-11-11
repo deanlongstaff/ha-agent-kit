@@ -44,8 +44,11 @@ python3 tools/check_secrets.py && python3 tools/validate.py
 - "Payload truncated" → collect again; save the result to a file rather than copying it.
 - **Unexpected diffs** (things you didn't change) are the owner's manual changes or
   another session's. Commit them separately first as `chore(sync): …` — never revert them.
-- **A structural diff after an HA update** (renamed domains, moved paths): read that
-  release's notes and adapt the docs/tools (AGENTS.md §7a), don't commit around it.
+- **Something was updated** — the diff touches `export-info.yaml`, `inventory/versions.yaml`,
+  `addons.yaml`, `node-red/palette.yaml` or `dashboards/resources.yaml`. Name the updates
+  in one line, read their notes for breaking changes, check the fallout, and adapt the
+  docs/tools (AGENTS.md §7a). Commit version bumps as `chore(sync): updates — <names>`.
+  Don't commit around a structural change (renamed domains, moved paths).
 - **A secret-scan hit** means redaction missed something. Extend `tools/redact.py` (and
   a rule in `check_secrets.py` if needed) and re-sync. For values that don't look secret
   (a surname, an alarm code), ask the owner to add them to `.secrets-denylist`. Never

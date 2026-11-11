@@ -5,6 +5,8 @@
 | [home.md](home.md) | Always — this home's specifics: install, URLs, people, keep list |
 | [architecture.md](architecture.md) | You need the big picture: hardware, add-ons, integrations, where logic lives |
 | [conventions.md](conventions.md) | Naming, renaming or adding entities and helpers |
+| [dashboards.md](dashboards.md) | Designing or changing any dashboard — the design rules and the workflow |
+| [style-guide.md](style-guide.md) | Making a card look like the rest — this home's theme, colours and card patterns |
 | [automations.md](automations.md) | Adding, changing or debugging Home Assistant automations and scripts |
 | [node-red.md](node-red.md) | Editing Node-RED flows (if installed) |
 | [backup-and-restore.md](backup-and-restore.md) | Restoring anything from this repo |

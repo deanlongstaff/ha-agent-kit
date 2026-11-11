@@ -54,7 +54,9 @@ The `ha-onboard` skill will:
 Typical findings: automations using `device_id`, templates where a native trigger
 exists, near-identical automations that could be one blueprint, `mode` choices that drop
 triggers, old YAML automations without an `id` (they can't be exported until they have
-one), entities with no area, orphaned helpers, things exposed to Assist that shouldn't be. You decide what to fix, and when.
+one), entities with no area, orphaned helpers, things exposed to Assist that shouldn't be,
+and dashboards that break the [design rules](../dashboards.md#design-rules) (hex colours,
+locks without a confirmation, cards pointing at entities that no longer exist). You decide what to fix, and when.
 
 ## 5. Switch to full access and improve, one change at a time
 

@@ -20,7 +20,10 @@ a time so each is easy to review and undo.
 
 ## Dashboards
 
-- *"Build a phone-first dashboard: one section per area, climate at the top."*
+- *"Build a phone-first dashboard: anything that needs attention at the top, then one section per area."*
+- *"Redesign my Living room section to follow the design rules. Show me before and after screenshots."*
+- *"Give my dashboard a dark theme with one accent colour, and record it in the style guide."*
+- *"Make a simple wall-tablet dashboard: big buttons, no scrolling, guarded locks."*
 - *"Add a card to the Home dashboard showing which windows are open. Change nothing else."*
 - *"Screenshot the Home dashboard at phone width and tell me what looks cramped."*
 
@@ -30,6 +33,12 @@ a time so each is easy to review and undo.
 - *"Find automations that use device_id and convert them to entity_id."*
 - *"Which integrations have entities that haven't updated in 24 hours?"*
 - *"My logs are noisy — what's spamming them, and is any of it a real problem?"*
+
+## Updates
+
+- *"Is it safe to install the pending updates? Check every changelog for breaking changes that affect my setup."*
+- *"I just updated. What changed, and did anything break?"*
+- *"Which custom integrations haven't been updated in a year?"*
 
 ## Housekeeping
 

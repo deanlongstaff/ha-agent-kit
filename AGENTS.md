@@ -61,7 +61,8 @@ In `.claude/skills/` (third-party ones are pinned and listed in
 | Any HA request — load it first, before exploring (automations, scripts, helpers, blueprints) | `home-assistant-best-practices` |
 | Exporting, committing, "sync", "back up to GitHub" | `ha-sync` |
 | Node-RED flows | `node-red` |
-| Dashboards with Bubble Card (optional style) | `ha-bubble-dashboard` |
+| Dashboards — card options and layout (with docs/dashboards.md) | `home-assistant-best-practices` |
+| Dashboards built with Bubble Card (optional) | `ha-bubble-dashboard` |
 
 This repo's rules beat the skills where they differ. Node-RED changes are deployed
 through the admin API (section 6), not handed to the user as JSON to import, when you
@@ -127,9 +128,15 @@ If sync prints warnings or notes, mention them in one line rather than ignoring 
 Cloudflare that block WebSocket commands. A logged-out tab means "ask the owner to log
 in", not "unavailable".
 
-**Dashboards.** Read the config, change the smallest piece, keep everything else
-byte-identical, save the whole config back. Take a screenshot at desktop and phone width
-afterwards if you can.
+**Dashboards** ([docs/dashboards.md](docs/dashboards.md), this home's look in
+[docs/style-guide.md](docs/style-guide.md)):
+- Follow the design rules: attention first, phone first, one section per area or purpose,
+  native cards first, colour only from the theme and only to mean state, confirmations on
+  real-world actions. Copy a pattern from the style guide before inventing one.
+- Read the config, change the smallest piece, keep everything else byte-identical, save
+  the whole config back.
+- Look at the result: screenshot at phone and desktop width (and dark mode), fix what
+  looks off before reporting done. Ask before adding a new custom card.
 
 **HA automations and scripts** ([docs/automations.md](docs/automations.md)):
 - Read the current config, write the **whole** automation back (`ha_config_set_automation`,
@@ -162,18 +169,38 @@ Seasonal automations are kept **disabled**, not deleted. Some devices are only s
 online. Offline ≠ removed. This home's list is in [docs/home.md](docs/home.md#keep-list);
 check [docs/known-issues.md](docs/known-issues.md) before "fixing" something odd.
 
-## 7a. When the live system looks different
+## 7a. When something updates
 
-Home Assistant ships monthly and regularly renames or moves things. When a sync, API
-result or UI doesn't match these docs, tools or skills:
+Home Assistant ships monthly, and so does almost everything around it: core integrations
+(covered by HA's release notes), custom integrations and cards from the Marketplace,
+add-ons, Node-RED and its palette, device firmware (ESPHome, Zigbee, Z-Wave, Wi-Fi
+devices), and even ha-mcp and the skills here. Any of them can rename entities, change
+attributes, drop options or deprecate actions.
 
-1. Compare `ha_version` in `homeassistant/export-info.yaml` with the previous one
-   (`git log -p homeassistant/export-info.yaml`) and read the release notes for every
-   version in between, including *Backward-incompatible changes*.
-2. If a release explains it, **adapt, don't work around**: update the docs/tools in the
-   same change and add a `CHANGELOG.md` line naming the release. Vendored skills are
-   pinned upstream copies: note conflicts in `.claude/skills/VENDORED.md` instead of editing them.
-3. If nothing explains it, treat it as unexpected (the owner's change, or a fault) and ask.
+**Before installing updates** (the owner asks "is it safe to update?"):
+1. Pending updates are `update.*` entities that are `on` (`latest_version`, `release_url`).
+2. Read the notes for each one, every version in between: HA's release blog
+   (*Backward-incompatible changes*, plus the section for every integration listed in
+   `homeassistant/inventory/integrations.yaml`); for everything else its GitHub releases or
+   changelog (`release_url`, or `documentation` in `inventory/versions.yaml`).
+3. Grep the repo for what each breaking change touches (entity ids, attributes, actions,
+   card types, Node-RED node types) and report the risk per update: *safe / needs a
+   change first / read yourself*.
+4. Snapshot first. Installing is the owner's call (rule 4) — offer, don't do.
+
+**After an update, or when the live system doesn't match these docs, tools or skills:**
+1. Find what changed. The sync diff shows it: `homeassistant/export-info.yaml` (HA),
+   `inventory/versions.yaml` (custom integrations, add-ons, Marketplace items, firmware),
+   `inventory/addons.yaml`, `node-red/palette.yaml`, `dashboards/resources.yaml`. Use
+   `git log -p` on those files for older changes.
+2. Read the notes for every version in between, as above.
+3. Check the fallout: Settings › Repairs, `ha_get_logs`, automations or entities that went
+   `unavailable`, cards that show errors, Node-RED nodes in an error state.
+4. If an update explains it, **adapt, don't work around**: fix the affected automations,
+   dashboards and flows (with the owner's OK), update the docs/tools in the same change,
+   and add a `CHANGELOG.md` line naming the update. Vendored skills are pinned upstream
+   copies: note conflicts in `.claude/skills/VENDORED.md` instead of editing them.
+5. If nothing explains it, treat it as unexpected (the owner's change, or a fault) and ask.
 
 ## 8. Writing for the owner
 

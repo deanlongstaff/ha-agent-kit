@@ -39,6 +39,8 @@ Node-RED. But point one at the house you live in and the same questions come up:
 | *"Why is it set up like this?"* | A changelog and decision log the agent reads every session |
 | *"What is this 120-line template?"* | Native-first rules: triggers, conditions and helpers a human can read |
 | *"It deleted my Christmas lights automation!"* | Confirm-before-delete, plus a keep-list of things that only *look* dead |
+| *"My dashboard is a wall of 200 entities."* | Twelve design rules, your own style guide, and a screenshot check on every change |
+| *"An update broke everything."* | Every sync records versions; the agent reads the changelogs before *and* after you update |
 
 **The idea in one line:** your live Home Assistant stays the source of truth, and this repo
 becomes its **mirror and its memory**.
@@ -144,12 +146,42 @@ prefer so the agent builds new things in the right place.
 Not sure? [Here's how to choose](docs/automations.md#ha-automations-or-node-red). Using
 both? Write the rule for which goes where in `docs/home.md`, and the agent sticks to it.
 
+## 🎨 Dashboards, not just automations
+
+The agent is just as handy with your UI. It designs to a set of
+[design rules](docs/dashboards.md#design-rules), records *your* look in a
+[style guide](docs/style-guide.md) so card #50 matches card #1, and **looks at its own work**:
+screenshots at phone and desktop width before it calls anything done.
+
+<p align="center">
+  <img src="assets/dashboards.svg" alt="A phone dashboard annotated with the design rules: attention first, one section per area and phone first, colour means state, guard real-world actions, checked by eye on every change" width="100%">
+</p>
+
+Native cards first (tile, heading, badges, area, thermostat), with an optional skill for
+[Bubble Card](https://github.com/Clooos/Bubble-Card) if you like a more styled look. Existing
+dashboards? Onboarding drafts your style guide from what you already have.
+
+## 🔄 Update-aware
+
+Home Assistant ships monthly, and your integrations, add-ons, custom cards and device
+firmware update constantly. Every sync records what's installed
+(`inventory/versions.yaml`), so the diff shows exactly what changed. Then:
+
+- **Before you update:** *"Is it safe to install the pending updates?"* — the agent reads
+  every changelog in between, greps your setup for what each breaking change touches, and
+  rates each update *safe / needs a change first / read yourself*.
+- **After you update:** it spots what changed, checks Repairs, logs and unavailable
+  entities, and fixes or flags the fallout — updating its own docs and tools rather than
+  working around surprises.
+
 ## ✨ What's included
 
 | | |
 |---|---|
 | 🔁 **The loop** | Snapshot → change → export → review → commit. Every AI change is one `git revert` away from undone. |
 | 📸 **A complete export** | Dashboards, automations, scripts, scenes, helpers, areas, devices, entities, integrations, add-ons and Node-RED flows — clean YAML/JSON, one file per thing. HA OS, Supervised, Container and Core. Old YAML automations it can't read are listed, not silently skipped. |
+| 🎨 **Dashboard design rules** | Attention first, phone first, native cards, colour that means something, guarded actions — plus your own style guide and a screenshot check. |
+| 🔄 **Update-aware** | Versions of HA, custom integrations, add-ons, cards and firmware in every sync; changelogs read before and after updates. |
 | ✅ **Quality checks on every commit** | HA automations need a *why*, use `entity_id` and current syntax; Node-RED function nodes stay small. Existing work is grandfathered. |
 | 🛡️ **Four layers of secret protection** | Redaction, your personal denylist, a pre-commit hook, and CI with gitleaks. |
 | 📜 **Agent rules that hold up** | An [`AGENTS.md`](AGENTS.md) refined on a real, busy house: confirm before deleting, native-first, change only what was asked, never touch credentials. |
@@ -166,6 +198,8 @@ both? Write the rule for which goes where in `docs/home.md`, and the agent stick
 "When the washing machine finishes, tell whoever's home. Nag again after 30 min."
 "Find automations using device_id and convert them to entity_id, one commit each."
 "Add an open-windows card to the Home dashboard. Change nothing else."
+"Redesign the Living room section to follow the design rules — show me before and after."
+"Is it safe to install the pending updates? Check every changelog for breaking changes."
 "List everything exposed to Assist that can unlock, open or disarm something."
 "What changed this week, and why?"
 ```
@@ -198,6 +232,7 @@ docs/
   home.md                 YOUR house: install, URLs, people, keep-list (filled by onboarding)
   conventions.md          naming, helper and notification conventions
   automations.md          HA automation house rules; node-red.md for flows
+  dashboards.md           dashboard design rules + workflow; style-guide.md for your look
   architecture.md …       templates for the human "why"
   guides/                 new install · existing install · MCP setup · prompt ideas
   reference/              generated on every sync
