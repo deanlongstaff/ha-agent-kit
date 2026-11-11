@@ -39,7 +39,7 @@ RULES: list[tuple[str, re.Pattern]] = [
     ("e-mail address", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z0-9.-]*[a-z]{2,}")),
     ("phone number (international)", re.compile(r"(?<![\w.+])\+[1-9]\d{0,2}[ -]?\(?\d{2,4}\)?[ -]?\d{3,4}[ -]?\d{3,4}(?![\w.])")),
     ("phone number (UK mobile)", re.compile(r"(?<![\w.])07\d{3}\s?\d{3}\s?\d{3}(?![\w.])")),
-    ("phone number (US)", re.compile(r"(?<![\w.])\(?[2-9]\d{2}\)?[ .-]\d{3}[ .-]\d{4}(?![\w.])")),
+    ("phone number (US)", re.compile(r"(?<![\w.-])(?:\([2-9]\d{2}\)\s?|[2-9]\d{2}[.-])\d{3}[.-]\d{4}(?![\w.-])")),
     ("precise coordinates", re.compile(r"""(?i)["']?(latitude|longitude|lat|lon|lng)["']?\s*[:=]\s*-?\d{1,3}\.\d{4,}""")),
 ]
 ALLOWED_EMAIL = re.compile(r"noreply@anthropic\.com|@users\.noreply\.github\.com|@example\.(com|org|net)")

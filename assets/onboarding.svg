@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="640" viewBox="0 0 880 640" role="img" aria-labelledby="t d">
+  <title id="t">Onboarding session</title>
+  <desc id="d">An example first session: the agent checks the setup, connects read-only to Home Assistant, builds a privacy denylist, exports everything and commits an initial snapshot.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1526"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+  </defs>
+  <rect width="880" height="640" rx="18" fill="url(#bg)" stroke="#273449"/>
+  <!-- window chrome -->
+  <path d="M0 18 Q0 0 18 0 L862 0 Q880 0 880 18 L880 46 L0 46 Z" fill="#151f33"/>
+  <circle cx="26" cy="23" r="7" fill="#ff5f57"/>
+  <circle cx="48" cy="23" r="7" fill="#febc2e"/>
+  <circle cx="70" cy="23" r="7" fill="#28c840"/>
+  <text x="440" y="28" text-anchor="middle" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">my-home — claude</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16">
+    <!-- prompt -->
+    <rect x="28" y="66" width="824" height="40" rx="8" fill="#ffffff" fill-opacity="0.04" stroke="#334155"/>
+    <text x="46" y="92" fill="#F59E6B">&gt;</text>
+    <text x="66" y="92" fill="#f1f5f9">Set up this repo for my existing Home Assistant.</text>
+
+    <!-- step 1 -->
+    <text x="46" y="142" fill="#a78bfa">●</text>
+    <text x="68" y="142" fill="#f1f5f9" font-weight="700">Step 1/7 · Health check</text>
+    <text x="68" y="166" fill="#22c55e">✓ <tspan fill="#94a3b8">PyYAML   </tspan>✓ <tspan fill="#94a3b8">pre-commit hook   </tspan>✓ <tspan fill="#94a3b8">repo is private</tspan></text>
+
+    <!-- step 2 -->
+    <text x="46" y="204" fill="#41BDF5">●</text>
+    <text x="68" y="204" fill="#f1f5f9" font-weight="700">Step 2/7 · Connecting to Home Assistant</text>
+    <text x="68" y="228" fill="#22c55e">✓ <tspan fill="#94a3b8">ha-mcp connected </tspan><tspan fill="#fbbf24">(read-only)</tspan><tspan fill="#94a3b8"> · Home Assistant 2026.11 · HA OS</tspan></text>
+
+    <!-- step 3 -->
+    <text x="46" y="266" fill="#F59E6B">●</text>
+    <text x="68" y="266" fill="#f1f5f9" font-weight="700">Step 3/7 · Privacy first</text>
+    <text x="68" y="290" fill="#94a3b8">Anything that identifies you but doesn't look secret? Surname, street,</text>
+    <text x="68" y="312" fill="#94a3b8">postcode, Wi-Fi name… <tspan fill="#cbd5e1">Add alarm codes to .secrets-denylist yourself.</tspan></text>
+    <text x="68" y="336" fill="#22c55e">✓ <tspan fill="#94a3b8">4 entries added to the denylist</tspan></text>
+
+    <!-- step 4 -->
+    <text x="46" y="374" fill="#38bdf8">●</text>
+    <text x="68" y="374" fill="#f1f5f9" font-weight="700">Step 4/7 · First export</text>
+    <text x="68" y="398" fill="#22c55e">✓ <tspan fill="#cbd5e1">7</tspan><tspan fill="#94a3b8"> dashboards  </tspan><tspan fill="#cbd5e1">142</tspan><tspan fill="#94a3b8"> automations  </tspan><tspan fill="#cbd5e1">38</tspan><tspan fill="#94a3b8"> scripts  </tspan><tspan fill="#cbd5e1">96</tspan><tspan fill="#94a3b8"> helpers</tspan></text>
+    <text x="68" y="422" fill="#22c55e">✓ <tspan fill="#cbd5e1">19</tspan><tspan fill="#94a3b8"> areas  </tspan><tspan fill="#cbd5e1">64</tspan><tspan fill="#94a3b8"> integrations  </tspan><tspan fill="#cbd5e1">1,204</tspan><tspan fill="#94a3b8"> entities  </tspan><tspan fill="#cbd5e1">14</tspan><tspan fill="#94a3b8"> Node-RED tabs</tspan></text>
+    <text x="68" y="446" fill="#22c55e">✓ <tspan fill="#94a3b8">secret scan clean · validate OK</tspan></text>
+    <text x="68" y="470" fill="#22c55e">✓ <tspan fill="#94a3b8">committed </tspan><tspan fill="#fbbf24">a41c9e2</tspan><tspan fill="#cbd5e1"> chore(sync): initial snapshot</tspan></text>
+
+    <!-- step 5 -->
+    <text x="46" y="508" fill="#22c55e">●</text>
+    <text x="68" y="508" fill="#f1f5f9" font-weight="700">Step 5/7 · Your house docs</text>
+    <text x="68" y="532" fill="#94a3b8">Who lives here, and which phone should get notifications?</text>
+
+    <!-- input -->
+    <rect x="28" y="566" width="824" height="48" rx="10" fill="#ffffff" fill-opacity="0.03" stroke="#41BDF5" stroke-opacity="0.6"/>
+    <text x="46" y="596" fill="#F59E6B">&gt;</text>
+    <text x="66" y="596" fill="#cbd5e1">Me and Sam. My phone gets critical alerts, Sam's gets the rest</text>
+    <rect x="684" y="582" width="10" height="20" fill="#cbd5e1"/>
+  </g>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="t d">
+  <title id="t">Four layers of secret protection</title>
+  <desc id="d">Secrets are stopped by four layers before they reach GitHub: redaction at export, your personal denylist, a pre-commit hook, and CI with gitleaks over the full history.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#16213a"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="340" rx="24" fill="url(#bg)"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="40" y="58" fill="#F59E6B" font-size="14" font-weight="700" letter-spacing="2.8">FOUR LAYERS</text>
+    <text x="40" y="90" fill="#f1f5f9" font-size="26" font-weight="700">Secrets get stopped long before they reach GitHub</text>
+
+    <!-- source -->
+    <rect x="40" y="128" width="150" height="150" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#334155"/>
+    <text x="115" y="166" text-anchor="middle" fill="#f1f5f9" font-size="18" font-weight="700">Your HA</text>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#fca5a5">
+      <text x="115" y="196" text-anchor="middle">token: eyJhbG…</text>
+      <text x="115" y="218" text-anchor="middle">you@example.com</text>
+      <text x="115" y="240" text-anchor="middle">alarm: 4821</text>
+      <text x="115" y="262" text-anchor="middle">lat: 51.50…</text>
+    </g>
+
+    <g stroke="#64748b" stroke-width="2.5" marker-end="url(#arrow)">
+      <line x1="196" y1="203" x2="224" y2="203"/>
+      <line x1="412" y1="203" x2="440" y2="203"/>
+      <line x1="628" y1="203" x2="656" y2="203"/>
+      <line x1="844" y1="203" x2="872" y2="203"/>
+      <line x1="1060" y1="203" x2="1088" y2="203"/>
+    </g>
+
+    <!-- layer cards: x = 230 + i*216, width 176 -->
+    <rect x="230" y="128" width="176" height="150" rx="16" fill="#41BDF5" fill-opacity="0.08" stroke="#41BDF5" stroke-opacity="0.55"/>
+    <text x="250" y="160" fill="#41BDF5" font-size="13" font-weight="800" letter-spacing="1.5">LAYER 1</text>
+    <text x="250" y="188" fill="#f1f5f9" font-size="18" font-weight="700">Redact</text>
+    <text x="250" y="214" fill="#94a3b8" font-size="14">sync.py turns secrets</text>
+    <text x="250" y="234" fill="#94a3b8" font-size="14">into <tspan font-family="ui-monospace, Menlo, monospace" fill="#bae6fd">!secret</tspan> and</text>
+    <text x="250" y="254" fill="#94a3b8" font-size="14">strips e-mails</text>
+
+    <rect x="446" y="128" width="176" height="150" rx="16" fill="#a78bfa" fill-opacity="0.08" stroke="#a78bfa" stroke-opacity="0.55"/>
+    <text x="466" y="160" fill="#a78bfa" font-size="13" font-weight="800" letter-spacing="1.5">LAYER 2</text>
+    <text x="466" y="188" fill="#f1f5f9" font-size="18" font-weight="700">Your denylist</text>
+    <text x="466" y="214" fill="#94a3b8" font-size="14">Surname, street,</text>
+    <text x="466" y="234" fill="#94a3b8" font-size="14">postcode, codes —</text>
+    <text x="466" y="254" fill="#94a3b8" font-size="14">never in git</text>
+
+    <rect x="662" y="128" width="176" height="150" rx="16" fill="#F59E6B" fill-opacity="0.08" stroke="#F59E6B" stroke-opacity="0.55"/>
+    <text x="682" y="160" fill="#F59E6B" font-size="13" font-weight="800" letter-spacing="1.5">LAYER 3</text>
+    <text x="682" y="188" fill="#f1f5f9" font-size="18" font-weight="700">Pre-commit</text>
+    <text x="682" y="214" fill="#94a3b8" font-size="14">Blocks tokens, keys,</text>
+    <text x="682" y="234" fill="#94a3b8" font-size="14">phones, coordinates,</text>
+    <text x="682" y="254" fill="#94a3b8" font-size="14">MCP URLs</text>
+
+    <rect x="878" y="128" width="176" height="150" rx="16" fill="#22c55e" fill-opacity="0.08" stroke="#22c55e" stroke-opacity="0.55"/>
+    <text x="898" y="160" fill="#22c55e" font-size="13" font-weight="800" letter-spacing="1.5">LAYER 4</text>
+    <text x="898" y="188" fill="#f1f5f9" font-size="18" font-weight="700">CI + gitleaks</text>
+    <text x="898" y="214" fill="#94a3b8" font-size="14">Re-scans every push</text>
+    <text x="898" y="234" fill="#94a3b8" font-size="14">and the full history</text>
+
+    <!-- github lock -->
+    <g transform="translate(1110 178)">
+      <rect x="0" y="14" width="44" height="36" rx="7" fill="#22c55e"/>
+      <path d="M9 14 L9 6 Q9 -6 22 -6 Q35 -6 35 6 L35 14" fill="none" stroke="#22c55e" stroke-width="5"/>
+      <circle cx="22" cy="30" r="5" fill="#0b1220"/>
+    </g>
+    <text x="1132" y="262" text-anchor="middle" fill="#86efac" font-size="13" font-weight="600">private</text>
+    <text x="1132" y="280" text-anchor="middle" fill="#86efac" font-size="13" font-weight="600">repo</text>
+  </g>
+</svg>

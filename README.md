@@ -1,71 +1,57 @@
-<div align="center">
+<p align="center">
+  <img src="assets/banner.svg" alt="HA Agent Kit — your AI co-pilot for Home Assistant. Every change reviewed, explained, and one git revert away from undone." width="100%">
+</p>
 
-# 🏠🤖 HA Agent Kit
+<p align="center">
+  <a href="https://github.com/deanlongstaff/ha-agent-kit/generate"><img src="https://img.shields.io/badge/Use_this_template-2ea44f?style=for-the-badge&logo=github" alt="Use this template"></a>
+  <a href="https://www.home-assistant.io"><img src="https://img.shields.io/badge/Home_Assistant-2026.11+-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white" alt="Home Assistant 2026.11+"></a>
+  <a href="https://claude.com/claude-code"><img src="https://img.shields.io/badge/Built_for-Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Built for Claude Code"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT licence"></a>
+</p>
 
-### Give your Home Assistant an AI co-pilot that explains its work, never leaks a secret, and can undo anything.
+<p align="center">
+  <b>Let an AI agent build and look after your Home Assistant — safely.</b><br>
+  Every change it makes is exported, scrubbed of secrets, explained and committed to <i>your</i> private git repo.<br>
+  For brand-new installs and ten-year-old ones.
+</p>
 
-[![Use this template](https://img.shields.io/badge/Use_this_template-2ea44f?style=for-the-badge&logo=github)](https://github.com/deanlongstaff/ha-agent-kit/generate)
-&nbsp;
-[![Home Assistant](https://img.shields.io/badge/Home_Assistant-2026.11+-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
-&nbsp;
-[![Claude Code](https://img.shields.io/badge/Built_for-Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://claude.com/claude-code)
-&nbsp;
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
-
-**A template repo that turns "ask an AI to fiddle with my smart home" into a proper,<br>
-reviewable, version-controlled workflow — for brand-new installs and ten-year-old ones.**
-
-[Quick start](#-quick-start) · [New install](docs/guides/new-install.md) · [Existing install](docs/guides/existing-install.md) · [MCP setup](docs/guides/mcp-setup.md) · [Security](SECURITY.md)
-
-</div>
+<p align="center">
+  <a href="#-quick-start"><b>Quick start</b></a> ·
+  <a href="docs/guides/new-install.md">New install</a> ·
+  <a href="docs/guides/existing-install.md">Existing install</a> ·
+  <a href="docs/guides/mcp-setup.md">MCP setup</a> ·
+  <a href="SECURITY.md">Security</a> ·
+  <a href="docs/guides/prompts.md">Prompt ideas</a>
+</p>
 
 ---
 
 ## 🤔 Why?
 
-AI agents are *great* at Home Assistant now. They can write automations, build dashboards,
-read traces and untangle Node-RED. But point one at your live house and you quickly hit:
+AI agents are genuinely good at Home Assistant now — automations, dashboards, traces,
+Node-RED. But point one at the house you live in and the same questions come up:
 
-- 😬 **"What did it just change?"** — edits vanish into the UI with no record.
-- 🔙 **"How do I undo that?"** — there's no diff, no history, no rollback.
-- 🔑 **"Did it just paste my token into a file?"** — config is full of secrets.
-- 🧠 **"Why is it like this?"** — next week, neither you nor the AI remembers.
-- 🍝 **"What *is* this automation?"** — 120 lines of Jinja where three native triggers would do.
-
-**HA Agent Kit** fixes all of that with a simple idea:
-
-> Your live Home Assistant stays the source of truth. **This repo becomes its mirror and its
-> memory** — every dashboard, automation, helper and Node-RED flow exported as readable
-> files, scrubbed of secrets, documented, and committed after *every* change the AI makes.
-
-## ✨ What you get
-
-| | |
+| 😬 Without the kit | 😌 With the kit |
 |---|---|
-| 🔁 **The loop** | Snapshot → change → export → review → commit. Every AI change is one `git revert` away from undone. |
-| 📸 **A full export** | Dashboards, automations, scripts, scenes, helpers, areas, devices, entities, integrations, add-ons and Node-RED flows — as clean YAML/JSON, one file per thing. Works on every install type. |
-| 🛡️ **Four layers of secret protection** | Redaction at export, your personal denylist, a pre-commit hook and CI with gitleaks. Tokens, keys, e-mails, phone numbers, coordinates, MCP URLs: blocked. |
-| 📜 **Agent rules that work** | An [`AGENTS.md`](AGENTS.md) battle-tested on a real, busy house: confirm before deleting, native-first, change only what was asked, never touch credentials. |
-| 🧩 **Skills, pre-installed** | Onboarding and sync skills, plus pinned community skills for HA best practices, Node-RED and Bubble Card dashboards. |
-| 🧭 **Guided onboarding** | Say *"set up this repo"* and the agent interviews you, connects MCP, protects your privacy and makes the first commit. |
-| 🩺 **A doctor** | `python3 tools/doctor.py` checks your hooks, denylist, repo visibility, skills and exports. |
-| 📚 **Docs that write themselves** | Generated reference pages for dashboards, automations, helpers, areas and flows, plus templates for the human *why*. |
+| *"What did it just change?"* | Every change is a commit with a readable diff |
+| *"How do I undo that?"* | `git revert` — or just *"undo yesterday's hallway change"* |
+| *"Did it just put my token in a file?"* | Four layers stop secrets long before GitHub |
+| *"Why is it set up like this?"* | A changelog and decision log the agent reads every session |
+| *"What is this 120-line template?"* | Native-first rules: triggers, conditions and helpers a human can read |
+| *"It deleted my Christmas lights automation!"* | Confirm-before-delete, plus a keep-list of things that only *look* dead |
+
+**The idea in one line:** your live Home Assistant stays the source of truth, and this repo
+becomes its **mirror and its memory**.
 
 ## 🔁 How it works
 
-```mermaid
-flowchart LR
-    You(["🙋 You<br/><i>'dim the hallway<br/>after 11pm'</i>"]) --> Agent
-    Agent["🤖 AI agent<br/>reads AGENTS.md<br/>+ skills"] -->|1. snapshot| Repo
-    Agent -->|2. change via MCP| HA[("🏠 Home Assistant<br/>+ Node-RED<br/><b>source of truth</b>")]
-    HA -->|3. collect.js| Sync["🧹 sync.py<br/>redact + split"]
-    Sync -->|4. check_secrets<br/>+ validate| Repo[("📦 Your private repo<br/><b>mirror + memory</b>")]
-    Repo -->|5. commit + docs| You
-```
+<p align="center">
+  <img src="assets/loop.svg" alt="The loop: 1 you ask, 2 snapshot, 3 change live through MCP, 4 export and scrub, 5 check and commit" width="100%">
+</p>
 
-The agent never edits files in the repo to change your house. It changes the **live
-system** through proper APIs (validated, with HA's own checks), then **exports** the result.
-So the repo can never drift into a fantasy version of your home.
+The agent never edits files in the repo to change your house. It changes the **live system**
+through Home Assistant's own APIs (so HA validates everything), then **exports** the result.
+The repo can't drift into a fantasy version of your home.
 
 ## 🚀 Quick start
 
@@ -106,7 +92,11 @@ claude
 >
 > **Set up this repo for my new Home Assistant.**
 
-The onboarding skill takes it from there. ☕
+The onboarding skill takes it from there. ☕ Here's roughly what that first session looks like:
+
+<p align="center">
+  <img src="assets/onboarding.svg" alt="Example onboarding session: health check, read-only connection, privacy denylist, first export of dashboards, automations, helpers and Node-RED tabs, then an initial snapshot commit" width="88%">
+</p>
 
 ## 🛤️ Pick your path
 
@@ -137,6 +127,19 @@ of what to improve. Fix things one commit at a time.
 </tr>
 </table>
 
+## ✨ What's included
+
+| | |
+|---|---|
+| 🔁 **The loop** | Snapshot → change → export → review → commit. Every AI change is one `git revert` away from undone. |
+| 📸 **A complete export** | Dashboards, automations, scripts, scenes, helpers, areas, devices, entities, integrations, add-ons and Node-RED flows — clean YAML/JSON, one file per thing. HA OS, Supervised, Container and Core. |
+| 🛡️ **Four layers of secret protection** | Redaction, your personal denylist, a pre-commit hook, and CI with gitleaks. |
+| 📜 **Agent rules that hold up** | An [`AGENTS.md`](AGENTS.md) refined on a real, busy house: confirm before deleting, native-first, change only what was asked, never touch credentials. |
+| 🧭 **Guided onboarding** | Say *"set up this repo"* and the agent interviews you, connects, protects your privacy and makes the first commit. |
+| 🧩 **Skills, ready to go** | `ha-onboard` and `ha-sync`, plus pinned community skills for HA best practices, Node-RED and Bubble Card dashboards. |
+| 🩺 **A doctor** | `python3 tools/doctor.py` checks hooks, denylist, repo visibility, skills and exports in one go. |
+| 📚 **Docs that keep up** | Reference pages regenerated on every sync, plus templates for the human *why*: house profile, conventions, decisions, known issues. |
+
 ## 💬 Things you can ask
 
 ```text
@@ -152,6 +155,10 @@ of what to improve. Fix things one commit at a time.
 More in **[prompts.md](docs/guides/prompts.md)**.
 
 ## 🛡️ Security, in one screen
+
+<p align="center">
+  <img src="assets/protection.svg" alt="Four layers: redaction at export, your denylist, a pre-commit hook, and CI with gitleaks, before a private repo" width="100%">
+</p>
 
 | | |
 |---|---|
@@ -187,6 +194,7 @@ tools/
   validate.py             YAML/JSON/Node-RED wiring checks + function-node lint
   doctor.py               setup checker
   update_kit.sh           pull kit updates without touching your home's files
+assets/                   the images in this README (onboarding removes them from your copy)
 ```
 
 After your first sync you'll also have `homeassistant/` (dashboards, automations, scripts,

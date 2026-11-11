@@ -91,7 +91,7 @@ Change `status: template` to `status: ready` in `docs/home.md`.
 
 Replace the kit's `README.md` with a short one for *their* home: a title, one paragraph,
 the "What's here" table, and a line "Built with [HA Agent Kit](https://github.com/deanlongstaff/ha-agent-kit)".
-Keep the kit's README text out of their repo.
+Keep the kit's README text out of their repo. Delete `assets/` too (it only holds the kit README's images).
 
 Fill in the first line of `CHANGELOG.md` and the two example entries in
 `docs/decisions.md` with today's date.

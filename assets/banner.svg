@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="t d">
+  <title id="t">HA Agent Kit</title>
+  <desc id="d">Your AI co-pilot for Home Assistant: every change reviewed, explained, and one git revert from undone.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#16213a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#41BDF5" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#41BDF5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F59E6B" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#F59E6B" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.07"/>
+    </pattern>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#bfe8fb"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="420" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="420" rx="24" fill="url(#dots)"/>
+  <circle cx="935" cy="235" r="210" fill="url(#glow)"/>
+  <circle cx="985" cy="210" r="90" fill="url(#glow2)"/>
+
+  <!-- text -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="72" y="112" fill="#41BDF5" font-size="16" font-weight="700" letter-spacing="3.2">HOME ASSISTANT  ×  AI AGENTS</text>
+    <text x="68" y="196" fill="url(#title)" font-size="78" font-weight="800" letter-spacing="-1.5">HA Agent Kit</text>
+    <text x="72" y="248" fill="#cbd5e1" font-size="24">Your AI co-pilot for Home Assistant.</text>
+    <text x="72" y="282" fill="#94a3b8" font-size="24">Every change reviewed, explained, and one</text>
+    <text x="72" y="316" fill="#94a3b8" font-size="24"><tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#F59E6B" font-size="22">git revert</tspan> away from undone.</text>
+
+    <g font-size="15" font-weight="600">
+      <rect x="72" y="346" width="132" height="34" rx="17" fill="#41BDF5" fill-opacity="0.12" stroke="#41BDF5" stroke-opacity="0.5"/>
+      <text x="138" y="368" text-anchor="middle" fill="#9fdcf9">Secret-safe</text>
+      <rect x="216" y="346" width="178" height="34" rx="17" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-opacity="0.5"/>
+      <text x="305" y="368" text-anchor="middle" fill="#86efac">Version-controlled</text>
+      <rect x="406" y="346" width="134" height="34" rx="17" fill="#F59E6B" fill-opacity="0.12" stroke="#F59E6B" stroke-opacity="0.5"/>
+      <text x="473" y="368" text-anchor="middle" fill="#fbc4a3">Native-first</text>
+    </g>
+  </g>
+
+  <!-- house -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M820 228 L935 128 L1050 228" stroke="#41BDF5" stroke-width="10"/>
+    <path d="M842 210 L842 338 Q842 346 850 346 L1020 346 Q1028 346 1028 338 L1028 210" stroke="#41BDF5" stroke-width="10"/>
+    <!-- devices: little network inside the house -->
+    <g stroke="#7dd3fc" stroke-width="3" stroke-opacity="0.7">
+      <path d="M885 300 L935 265 L985 300"/>
+      <path d="M935 265 L935 318"/>
+    </g>
+    <g fill="#0b1220" stroke="#7dd3fc" stroke-width="3">
+      <circle cx="885" cy="300" r="9"/>
+      <circle cx="985" cy="300" r="9"/>
+      <circle cx="935" cy="318" r="9"/>
+    </g>
+  </g>
+  <!-- agent sparkle -->
+  <path d="M935 190 C939 222 945 228 977 232 C945 236 939 242 935 274 C931 242 925 236 893 232 C925 228 931 222 935 190 Z" fill="#F59E6B"/>
+  <path d="M990 168 C992 180 994 182 1006 184 C994 186 992 188 990 200 C988 188 986 186 974 184 C986 182 988 180 990 168 Z" fill="#fbc4a3"/>
+
+  <!-- connector to git history -->
+  <path d="M1040 290 C1075 290 1080 250 1112 250" fill="none" stroke="#64748b" stroke-width="2.5" stroke-dasharray="6 6"/>
+
+  <!-- git history -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
+    <line x1="1120" y1="100" x2="1120" y2="345" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="1120" cy="110" r="9" fill="#22c55e"/>
+    <text x="1140" y="115" fill="#cbd5e1">feat(ha)</text>
+    <circle cx="1120" cy="180" r="9" fill="#41BDF5"/>
+    <text x="1140" y="185" fill="#cbd5e1">fix(flow)</text>
+    <circle cx="1120" cy="250" r="9" fill="#F59E6B"/>
+    <text x="1140" y="255" fill="#cbd5e1">docs</text>
+    <circle cx="1120" cy="320" r="9" fill="#a78bfa"/>
+    <text x="1140" y="325" fill="#cbd5e1">sync</text>
+  </g>
+</svg>
