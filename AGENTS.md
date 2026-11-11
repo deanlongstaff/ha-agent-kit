@@ -25,8 +25,10 @@ for this home's specifics (install type, URLs, people, notify targets, quirks).
    fails, fix the redaction — never bypass the hook (`--no-verify`) and never put a real
    value in an allowlist.
 3. **Never handle credentials.** The owner logs in and types secrets themselves (Node-RED
-   credential env vars, integration passwords, tokens). Ask them to; don't ask them to
-   paste a secret into chat.
+   credential env vars, integration passwords, tokens, MCP URLs via `tools/connect.py`).
+   Ask them to; don't ask them to paste a secret into chat. Never read or print `.env`,
+   `.secrets-denylist`, `secrets.yaml` or your agent's MCP config, and never run
+   `tools/connect.py` yourself.
 4. **Confirm before anything irreversible or ambiguous**: deleting entities, devices,
    flows, dashboards or integrations; restarting HA; restoring or deleting backups;
    installing updates. Things that look dead often aren't (section 7).
@@ -52,8 +54,10 @@ add-ons exist, who lives here and how to notify them. Always read it. Bigger pic
 
 ## 3. Skills to load
 
-In `.claude/skills/` (third-party ones are pinned and listed in
-[VENDORED.md](.claude/skills/VENDORED.md)):
+In `.claude/skills/` (Claude Code, GitHub Copilot), copied to `.agents/skills/` by
+`tools/setup.py` for Codex, Gemini CLI, Cursor and others. If your agent doesn't load
+skills by itself, read the matching `SKILL.md` before starting the task. Third-party
+skills are pinned and listed in [VENDORED.md](.claude/skills/VENDORED.md):
 
 | Task | Load |
 |---|---|
@@ -82,8 +86,9 @@ node-red/            only if Node-RED is installed
   flows/<tab>.json   one importable file per tab
   functions/         GENERATED read-only .js mirrors of function nodes (for grep)
 docs/                hand-written docs + docs/reference/ (GENERATED, don't edit)
-tools/               collect.js, collect-cli.mjs, sync.py, check_secrets.py, validate.py,
-                     automation_lint.py, function_lint.py, doctor.py
+tools/               setup.py, connect.py (owner only), collect.js, collect-cli.mjs, sync.py,
+                     check_secrets.py, validate.py, automation_lint.py, function_lint.py,
+                     doctor.py, update_kit.py — all Python/Node: Windows, macOS, Linux
 ```
 
 Use the repo to answer "where is X used?" before you touch X:
@@ -120,7 +125,9 @@ If sync prints warnings or notes, mention them in one line rather than ignoring 
 2. **A browser tab** on the **local** HA URL, using
    `document.querySelector('home-assistant').hass` (`callWS`, `callApi`; check
    `hass.connected`). Needed for `tools/collect.js` and Node-RED via ingress.
-3. **The terminal** with a token (`tools/collect-cli.mjs`) — for collecting only.
+3. **The terminal** with a token in `.env` (`tools/collect-cli.mjs`, set up by the owner
+   with `tools/connect.py`) — for collecting only. This is the export path for agents
+   without a browser tool.
 4. **Nothing connected?** Don't stall. Show the user the exact YAML/UI change and let them
    apply it, then sync.
 

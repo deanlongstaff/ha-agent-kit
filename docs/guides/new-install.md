@@ -15,13 +15,13 @@ you make the calls.
 - **Finish HA's onboarding** in the browser: create *your* owner account, set your
   location and units, let it discover devices. Don't add integrations yet beyond what it
   finds automatically.
-- **An AI coding agent** — this kit is built and tested with
-  [Claude Code](https://claude.com/claude-code) (terminal, desktop app or IDE). Anything
-  that reads `AGENTS.md` can follow the rules.
+- **An AI coding agent** — [Claude Code](https://claude.com/claude-code) (recommended),
+  Codex, Gemini CLI, Cursor, Copilot… on Windows, macOS or Linux.
 
 ## 1. One prompt
 
-Open Claude Code in the folder where you keep projects and paste:
+Open your agent (Claude Code, Codex, Gemini CLI…) in the folder where you keep projects
+and paste:
 
 ```text
 Set up HA Agent Kit for my Home Assistant: make me a private copy of
@@ -35,19 +35,20 @@ Say it's a **new** install when it asks. The `ha-onboard` skill then:
 2. asks about your home — install type, local address, built-in automations or Node-RED;
 3. builds your privacy denylist with you;
 4. walks you through installing **ha-mcp** in Home Assistant, then has you run
-   `bash tools/connect-mcp.sh` in your own terminal so the secret URL never touches the chat
+   `python3 tools/connect.py` in your own terminal so the secret URL never touches the chat
    (details: [mcp-setup.md](mcp-setup.md));
 5. after one restart (*"continue onboarding"*), exports your fresh install, writes your
    house docs and makes the first commits.
 
 Path A needs write access for the foundations below, so say **no** to read-only when
-`connect-mcp.sh` asks — or start read-only and re-run it later.
+`connect.py` asks — or start read-only and re-run it later.
 
 <details>
 <summary>By hand instead</summary>
 
-**Use this template** → **Private** → clone → `bash tools/setup.sh` → install ha-mcp →
-`bash tools/connect-mcp.sh` → `claude` → *"continue onboarding"*.
+**Use this template** → **Private** → clone → `python3 tools/setup.py` → install ha-mcp →
+`python3 tools/connect.py` → start your agent in the folder → *"continue onboarding"*.
+(Windows: `py` instead of `python3`.)
 
 </details>
 

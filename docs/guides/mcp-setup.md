@@ -47,38 +47,45 @@ Other install methods (the add-on, Docker, `uvx`) are in the
 
 ### Start read-only (recommended for your first week)
 
-`bash tools/connect-mcp.sh` offers this; by hand, append `/readonly` to the URL:
+`python3 tools/connect.py` offers this; by hand, append `/readonly` to the URL:
 `http://<ha-ip>:9584/private_<random>/readonly`. Your agent
 can explore, audit and export, but every write is blocked. Swap to the full URL when you're
 comfortable with how it works.
 
-### Connect Claude Code
+### Connect your agent
 
-From the repo folder, in **your own terminal**:
+From the repo folder, in **your own terminal** (Windows: `py` instead of `python3`, in
+PowerShell or Windows Terminal):
 
 ```bash
-bash tools/connect-mcp.sh
+python3 tools/connect.py
 ```
 
 It asks for the URL with hidden input, offers read-only mode, checks Home Assistant
-answers, and adds it at **user scope** — your user config, not the repo. The URL never
-passes through the agent's chat. Restart Claude Code afterwards.
+answers, and adds it at **user scope** — your user config, not the repo — to each agent
+it finds. The URL never passes through the agent's chat. Restart your agent afterwards.
 
 Or by hand (the URL ends up in your shell history):
 
-```bash
-claude mcp add --transport http --scope user home-assistant "http://<ha-ip>:9584/private_<random>"
-```
+| Agent | Command |
+|---|---|
+| Claude Code | `claude mcp add --transport http --scope user home-assistant "<url>"` |
+| Codex | `codex mcp add home-assistant --url "<url>"` |
+| Gemini CLI | `gemini mcp add --transport http --scope user home-assistant "<url>"` |
+| Cursor | Settings › MCP › Add new global MCP server (streamable HTTP) |
+| VS Code / Copilot | Command Palette › *MCP: Add Server…* › HTTP › Global |
 
-Check it with `claude mcp list` (or `/mcp` inside a session). The tools show up as
-`ha_*`. In the Claude desktop app's Code tab the same user-scope config is used.
+Never put the URL in a file inside this repo. Check it worked with your agent's MCP list
+(`claude mcp list`, `codex mcp list`, `gemini mcp list`, or `/mcp` inside a session). The
+tools show up as `ha_*` (some agents prefix them with the server name).
 
-### Other agents
+### Exports without a browser
 
-AGENTS.md is read by most coding agents (Codex, Cursor, Gemini CLI, Copilot, Windsurf…).
-Add the same connect URL as a **streamable HTTP** MCP server in that tool's *user/global*
-settings, never in a file inside this repo. The `.claude/skills/` folder is Claude-specific;
-other agents can still read the skill files if you point them at them.
+The repo is updated by an export. Claude's browser tools run it in a logged-in HA tab with no
+token; every other agent uses the terminal collector, which needs Node 22+ and a long-lived
+token. `connect.py`'s second question stores your local address and the token in `.env`
+(git-ignored, readable only by you on macOS/Linux). Create the token while signed in as your
+dedicated ha-mcp user, so revoking it never touches your own login.
 
 ### Check it works
 

@@ -8,7 +8,8 @@ along the way.
 
 ## 1. One prompt
 
-Open Claude Code in the folder where you keep projects and paste:
+Open your agent (Claude Code, Codex, Gemini CLI…) in the folder where you keep projects
+and paste:
 
 ```text
 Set up HA Agent Kit for my Home Assistant: make me a private copy of
@@ -26,7 +27,7 @@ as an archive. This kit's layout is generated, and mixing the two gets confusing
 1. Creates your **private** repo and installs what it needs (privately, inside the repo).
 2. Asks about your home: install type, local address, built-in automations or Node-RED.
 3. Builds your privacy denylist with you.
-4. Walks you through installing **ha-mcp**, then has you run `bash tools/connect-mcp.sh` in your
+4. Walks you through installing **ha-mcp**, then has you run `python3 tools/connect.py` in your
    own terminal — say **yes to read-only**, so for now the agent can look at everything and
    change nothing. The secret URL never touches the chat ([mcp-setup.md](mcp-setup.md)).
 5. After one restart (*"continue onboarding"*): **exports everything** and shows you a
@@ -42,8 +43,9 @@ as an archive. This kit's layout is generated, and mixing the two gets confusing
 <details>
 <summary>By hand instead</summary>
 
-**Use this template** → **Private** → clone → `bash tools/setup.sh` → install ha-mcp →
-`bash tools/connect-mcp.sh` → `claude` → *"continue onboarding"*.
+**Use this template** → **Private** → clone → `python3 tools/setup.py` → install ha-mcp →
+`python3 tools/connect.py` → start your agent in the folder → *"continue onboarding"*.
+(Windows: `py` instead of `python3`.)
 
 </details>
 

@@ -14,7 +14,7 @@ and dashboards / flows are round-trip checked before the script exits.
 """
 from __future__ import annotations
 
-import base64, csv, gzip, io, json, re, shutil, sys
+import base64, csv, gzip, io, json, re, shutil, sys, unicodedata, zlib
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -47,7 +47,8 @@ def dump_yaml(obj) -> str:
 
 def write(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:  # LF on every OS
+        f.write(text if text.endswith("\n") else text + "\n")
 
 
 def write_json(path: Path, obj):
@@ -59,7 +60,12 @@ def write_yaml(path: Path, obj, header: str | None = None):
 
 
 def slug(s: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-") or "unnamed"
+    """File-name-safe ASCII: 'Café — Lights' -> 'cafe-lights'. Non-Latin names keep a stable fallback."""
+    text = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode()
+    out = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    if not out and s:  # e.g. a name written entirely in another script
+        out = "x-" + format(zlib.crc32(s.encode("utf-8")), "08x")
+    return out or "unnamed"
 
 
 def reset(*dirs: Path):
@@ -410,7 +416,7 @@ def ref_areas(b: dict):
 # ── checks ──────────────────────────────────────────────────────────────────
 def roundtrip(b: dict, dashboards: list[str]):
     for url in dashboards:
-        text = (HA / "dashboards" / f"{url}.yaml").read_text()
+        text = (HA / "dashboards" / f"{url}.yaml").read_text(encoding="utf-8")
         assert yaml.safe_load(text) == b["dashboards"][url]["config"], f"dashboard {url} does not round-trip"
     if (b.get("nodered") or {}).get("flows"):
         a = {n["id"]: n for n in build_flows()}

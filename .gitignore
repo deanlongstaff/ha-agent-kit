@@ -20,3 +20,4 @@ flows_cred.json
 .flows_cred.json.backup
 .mcp.json
 .venv/
+.agents/

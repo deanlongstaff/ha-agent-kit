@@ -15,6 +15,10 @@ import re, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+from _env import utf8_console  # noqa: E402
+
+utf8_console()
 # vendored third-party skills: full of example placeholders (our own skills are still scanned)
 SKIP_DIRS = (".claude/skills/home-assistant-best-practices/", ".claude/skills/node-red/", ".claude/skills/ha-bubble-dashboard/")
 SKIP_FILES = {"tools/check_secrets.py", "tools/redact.py", ".secrets-denylist.example"}
@@ -47,15 +51,15 @@ ALLOWED_EMAIL = re.compile(r"noreply@anthropic\.com|@users\.noreply\.github\.com
 
 def files(staged: bool) -> list[str]:
     if staged:
-        out = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"], cwd=ROOT, capture_output=True, text=True).stdout
+        out = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
     else:
-        out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT, capture_output=True, text=True).stdout
+        out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
     return [f for f in out.splitlines() if f and f not in SKIP_FILES and not f.startswith(SKIP_DIRS)]
 
 
 def read_list(name: str) -> list[str]:
     p = ROOT / name
-    return [l.strip() for l in p.read_text().splitlines() if l.strip() and not l.startswith("#")] if p.exists() else []
+    return [l.strip() for l in p.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")] if p.exists() else []
 
 
 def main() -> int:
@@ -68,9 +72,9 @@ def main() -> int:
         if not p.is_file():
             continue
         if staged:
-            text = subprocess.run(["git", "show", f":{f}"], cwd=ROOT, capture_output=True, text=True, errors="replace").stdout
+            text = subprocess.run(["git", "show", f":{f}"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
         else:
-            text = p.read_text(errors="replace")
+            text = p.read_text(encoding="utf-8", errors="replace")
         for n, line in enumerate(text.splitlines(), 1):
             hits = [name for name, rx in RULES if rx.search(line) and not (name == "e-mail address" and ALLOWED_EMAIL.search(line))]
             hits += ["denylisted value" for d in deny if re.search(rf"(?<![\w]){re.escape(d)}(?![\w])", line, re.I)]

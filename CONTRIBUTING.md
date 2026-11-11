@@ -17,5 +17,7 @@ Thanks for making the kit better! Ideas, fixes and new redaction rules are all w
 Before opening a PR:
 
 ```bash
+python3 tools/setup.py
 python3 tools/check_secrets.py && python3 tools/validate.py
+python3 tests/smoke.py        # CI runs this on Windows, macOS and Linux
 ```

@@ -13,14 +13,19 @@ local URL and install type.
 
 Pick the first that works:
 
-**A. Browser tab (no token needed).**
+Commands say `python3`; on Windows use `py`.
+
+**A. Browser tab (no token needed)** — when you have a browser tool (Claude desktop app,
+Claude in Chrome, or similar).
 1. Open the **local** HA URL from `docs/home.md` in your browser tool. If it shows a login
    page, ask the owner to log in — never type credentials.
 2. Run the contents of `tools/collect.js` as JavaScript in that tab, prefixed with
    `await`. It returns `B64START…B64END<n>`. Browser tools usually save big results to a
    file — use that file path in step 2; don't read the payload into context.
 
-**B. Terminal (token in `.env` or the environment).**
+**B. Terminal** — every other agent (Codex, Gemini CLI, Claude Code in a plain terminal).
+Needs Node 22+ and `HA_URL`/`HA_TOKEN` in `.env`; the owner sets that up with
+`python3 tools/connect.py` (never read or print `.env` yourself).
 ```bash
 node tools/collect-cli.mjs          # writes .export/bundle.txt
 ```
@@ -40,7 +45,7 @@ git status --short && git diff --stat
 python3 tools/check_secrets.py && python3 tools/validate.py
 ```
 
-- `sync.py` needs PyYAML; if it says it's missing, run `bash tools/setup.sh` (it installs it
+- `sync.py` needs PyYAML; if it says it's missing, run `python3 tools/setup.py` (it installs it
   privately in `.venv`, which the tools then use automatically).
 - "Payload truncated" → collect again; save the result to a file rather than copying it.
 - **Unexpected diffs** (things you didn't change) are the owner's manual changes or

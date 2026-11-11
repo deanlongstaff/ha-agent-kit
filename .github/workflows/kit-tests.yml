@@ -1,0 +1,35 @@
+name: kit-tests
+
+# Tests the kit itself on Windows, macOS and Linux. Runs only in the kit's own repository,
+# so copies made from the template don't spend Actions minutes on it.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.repository == 'deanlongstaff/ha-agent-kit'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.9", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Setup (no PyYAML preinstalled, so the private .venv path is exercised)
+        run: python tools/setup.py
+      - name: Smoke test
+        run: python tests/smoke.py
+      - name: Pre-commit hook runs under this OS's shell
+        shell: bash
+        run: sh .githooks/pre-commit

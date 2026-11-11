@@ -9,6 +9,10 @@ import json, shutil, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+from _env import utf8_console, venv_python  # noqa: E402
+
+utf8_console()
 OK, WARN, FAIL = "✅", "⚠️ ", "❌"
 results: list[tuple[str, str, str]] = []
 
@@ -19,7 +23,7 @@ def add(status: str, what: str, fix: str = ""):
 
 def run(*cmd: str) -> str:
     try:
-        return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=20).stdout.strip()
+        return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20).stdout.strip()
     except Exception:  # noqa: BLE001
         return ""
 
@@ -31,11 +35,11 @@ try:
     import yaml  # noqa: F401
     add(OK, "PyYAML installed")
 except ImportError:
-    venv = next((p for p in (ROOT / ".venv" / "bin" / "python", ROOT / ".venv" / "Scripts" / "python.exe") if p.exists()), None)
+    venv = venv_python()
     if venv and subprocess.run([str(venv), "-c", "import yaml"], capture_output=True).returncode == 0:
         add(OK, "PyYAML installed in the repo's .venv (tools use it automatically)")
     else:
-        add(FAIL, "PyYAML missing", "bash tools/setup.sh")
+        add(FAIL, "PyYAML missing", "python3 tools/setup.py   (Windows: py tools/setup.py)")
 
 # Node (only for the terminal collector)
 node = run("node", "--version")
@@ -49,11 +53,11 @@ hooks = run("git", "config", "core.hooksPath")
 if hooks == ".githooks":
     add(OK, "pre-commit hook enabled (secret scan + validation)")
 else:
-    add(FAIL, "pre-commit hook not enabled", "bash tools/setup.sh")
+    add(FAIL, "pre-commit hook not enabled", "python3 tools/setup.py")
 
 # Denylist
 deny = ROOT / ".secrets-denylist"
-entries = [l for l in deny.read_text().splitlines() if l.strip() and not l.startswith("#")] if deny.exists() else []
+entries = [l for l in deny.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")] if deny.exists() else []
 if entries:
     add(OK, f".secrets-denylist has {len(entries)} entries")
 else:
@@ -67,7 +71,7 @@ add(FAIL if bad else OK, f"sensitive files tracked by git: {', '.join(bad)}" if 
 
 # .env token hygiene
 env = ROOT / ".env"
-if env.exists() and "HA_TOKEN=" in env.read_text() and "HA_TOKEN=\n" not in env.read_text() + "\n":
+if env.exists() and "HA_TOKEN=" in env.read_text(encoding="utf-8") and "HA_TOKEN=\n" not in env.read_text(encoding="utf-8") + "\n":
     add(WARN, ".env holds a Home Assistant token", "fine for a single-user machine; better: pass it from a password manager (see .env.example)")
 
 # Project-scoped MCP config would put the connect URL (a credential) in the repo
@@ -102,16 +106,24 @@ missing = need - set(have)
 add(FAIL if missing else OK, f"skills missing: {', '.join(sorted(missing))}" if missing else f"skills: {', '.join(have)}",
     "restore .claude/skills from the kit, or run tools/update_skills.sh" if missing else "")
 
+# Skills copy for non-Claude agents (.agents/skills, made by setup.py)
+mirror = ROOT / ".agents" / "skills"
+if mirror.is_dir():
+    stale = any(not (mirror / p.relative_to(skills)).exists() or (mirror / p.relative_to(skills)).read_bytes() != p.read_bytes()
+                for p in skills.rglob("*") if p.is_file())
+    add(WARN if stale else OK, ".agents/skills is out of date" if stale else ".agents/skills in step (Codex, Gemini CLI and others)",
+        "python3 tools/setup.py" if stale else "")
+
 # Export state
 info = ROOT / "homeassistant" / "export-info.yaml"
 if info.exists():
-    add(OK, "export present: " + " · ".join(l.strip() for l in info.read_text().splitlines() if l and not l.startswith("#")))
+    add(OK, "export present: " + " · ".join(l.strip() for l in info.read_text(encoding="utf-8").splitlines() if l and not l.startswith("#")))
 else:
     add(WARN, "nothing exported yet", "ask your agent to 'continue onboarding'")
 
 # Secret scan of the working tree
 if (ROOT / "tools" / "check_secrets.py").exists():
-    r = subprocess.run([sys.executable, "tools/check_secrets.py"], cwd=ROOT, capture_output=True, text=True)
+    r = subprocess.run([sys.executable, "tools/check_secrets.py"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
     add(OK if r.returncode == 0 else FAIL, "secret scan clean" if r.returncode == 0 else "secret scan found problems",
         "" if r.returncode == 0 else "python3 tools/check_secrets.py")
 

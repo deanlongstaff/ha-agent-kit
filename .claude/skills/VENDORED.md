@@ -8,6 +8,10 @@
 | `node-red` | vendored | Node-RED flows with the Home Assistant websocket nodes |
 | `ha-bubble-dashboard` | vendored (optional) | Bubble Card dashboards, themes and CSS |
 
+`tools/setup.py` copies this folder to `.agents/skills/` (git-ignored) for Codex, Gemini
+CLI, Cursor and other agents that read the open Agent Skills location. Edit skills here,
+then re-run setup.
+
 ## Vendored third-party skills
 
 Copied in so every agent session gets them without installing anything. All are MIT

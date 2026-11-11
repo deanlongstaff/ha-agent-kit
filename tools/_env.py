@@ -1,25 +1,37 @@
-"""Find PyYAML: the current Python if it has it, otherwise the repo's private .venv.
+"""Shared start-up for the kit's Python tools: works the same on Windows, macOS and Linux.
 
-bash tools/setup.sh creates .venv only when the system Python lacks PyYAML, so nothing is
-installed system-wide. Every tool calls ensure_yaml() and can be run as plain
-`python3 tools/<tool>.py` either way.
+- ensure_yaml(): PyYAML from the current Python, or else from the repo's private .venv
+  (tools/setup.py creates it only when needed), re-running the tool with that Python.
+- utf8_console(): print emoji and other non-ASCII text on Windows consoles too.
 """
-import os, sys
+import os, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VENV_PYTHONS = (ROOT / ".venv" / "bin" / "python", ROOT / ".venv" / "Scripts" / "python.exe")
 
 
+def utf8_console():
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
+def venv_python():
+    return next((p for p in VENV_PYTHONS if p.exists()), None)
+
+
 def ensure_yaml():
+    utf8_console()
     try:
         import yaml
         return yaml
     except ImportError:
         pass
-    if not os.environ.get("HA_KIT_REEXEC"):
-        for py in VENV_PYTHONS:
-            if py.exists() and os.path.abspath(sys.executable) != os.path.abspath(py):
-                os.environ["HA_KIT_REEXEC"] = "1"
-                os.execv(str(py), [str(py), *sys.argv])
-    sys.exit("PyYAML is missing — run bash tools/setup.sh (or: python3 -m pip install pyyaml)")
+    py = venv_python()
+    if py and not os.environ.get("HA_KIT_REEXEC") and os.path.abspath(sys.executable) != os.path.abspath(py):
+        env = dict(os.environ, HA_KIT_REEXEC="1")
+        sys.exit(subprocess.call([str(py), *sys.argv], env=env))  # not os.execv: it misbehaves on Windows
+    sys.exit("PyYAML is missing — run: python3 tools/setup.py   (Windows: py tools/setup.py)")

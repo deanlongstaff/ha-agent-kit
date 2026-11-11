@@ -10,11 +10,15 @@ their Home Assistant, with docs an agent can work from. **You do the work; the u
 answers questions and does the few things that involve secrets.** Be warm and brief, ask
 one small group of questions at a time, and say which step you're on ("Step 3 of 8").
 
+Works with any agent (Claude Code, Codex, Gemini CLI, Cursor, Copilot…) on Windows, macOS
+or Linux. Commands below say `python3`; on Windows use `py` (or `python`). Run them from
+the repo folder.
+
 Hard rules, all the way through:
 - Never ask for passwords, tokens, codes or MCP URLs in chat. Secrets go where the user
-  types them themselves: Home Assistant's UI, their own terminal (`bash tools/connect-mcp.sh`),
+  types them themselves: Home Assistant's UI, their own terminal (`python3 tools/connect.py`),
   or their editor.
-- Never install system-wide software without asking. `bash tools/setup.sh` installs nothing
+- Never install system-wide software without asking. `python3 tools/setup.py` installs nothing
   system-wide; anything needing `sudo` or a password, the user runs.
 - Never push anywhere public.
 
@@ -25,11 +29,11 @@ the state, then continue from there — don't repeat finished steps:
 
 | If… | Go to |
 |---|---|
-| This folder isn't a kit repo (no `AGENTS.md` + `bash tools/setup.sh`) | Step 1 |
+| This folder isn't a kit repo (no `AGENTS.md` + `tools/setup.py`) | Step 1 |
 | `python3 tools/doctor.py` reports PyYAML missing or the hook not enabled | Step 2 |
 | `docs/home.md` still says `status: template` | Step 3 |
 | `.secrets-denylist` has no entries (doctor warns) | Step 4 |
-| No `ha_*` tools, no browser tool, no `HA_URL` in the environment | Step 5 |
+| No `ha_*` tools, and neither a browser tool nor `HA_URL` in `.env` for exports | Step 5 |
 | No `homeassistant/export-info.yaml` | Step 6 |
 | `docs/home.md` says `status: onboarding` | Step 7 |
 | `status: ready` | Step 8, or onboarding is done — say so |
@@ -46,19 +50,25 @@ folder). Then, best first:
   (if the clone comes back empty, wait a few seconds and `gh repo clone <name>`).
   It's private from the start.
 - **Otherwise:** `git clone https://github.com/deanlongstaff/ha-agent-kit.git <name>`, then
-  inside it `rm -rf .git && git init -q -b main && git add -A && git commit -qm "chore: start from HA Agent Kit"`
-  (a fresh history that's theirs). The private remote comes in step 8.
+  give it a fresh history that's theirs: delete its `.git` folder (`rm -rf .git`; PowerShell:
+  `Remove-Item -Recurse -Force .git`), then `git init -q -b main`, `git add -A`,
+  `git commit -qm "chore: start from HA Agent Kit"`. The private remote comes in step 8.
 
 Work inside the new folder from now on. If this session was started elsewhere, read the
 new folder's `AGENTS.md` now, and tell the user that future sessions should be opened in
-that folder (terminal: `cd <name> && claude`; desktop app: choose the folder) so the
-rules and skills load automatically.
+that folder (e.g. `cd <name>` then `claude`, `codex` or `gemini`; desktop apps: choose the
+folder) so the rules and skills load automatically.
 
 ## Step 2 — Prerequisites
 
-Run `bash tools/setup.sh`. It checks git and Python 3.9+, makes PyYAML available (a private
-`.venv` if needed), enables the pre-commit hook, creates `.secrets-denylist` and runs the
-doctor.
+Run `python3 tools/setup.py`. It checks git and Python 3.9+, makes PyYAML available (a private
+`.venv` if needed), enables the pre-commit hook, creates `.secrets-denylist`, copies the
+skills to `.agents/skills/` (where Codex, Gemini CLI and other agents look for them) and
+runs the doctor.
+
+No Python at all? Install it first (macOS: `brew install python`; Windows:
+`winget install Python.Python.3.12`; Debian/Ubuntu: `sudo apt install python3 python3-venv`
+— that one they run themselves).
 
 If it stops on a missing tool, show the one install command it printed and offer to run
 it (Homebrew/winget you may run with their OK; `sudo apt …` they run themselves), then
@@ -105,15 +115,19 @@ Check what you already have, best first:
      the connect URL.
    - If you have a browser tool, offer to open their local HA address and point at each
      screen as they go. They log in and type every password; restarting HA needs their OK.
-   - Then, **in their own terminal** (not through you): `bash tools/connect-mcp.sh` from the
-     repo folder. It asks for the URL with hidden input, offers read-only mode, tests it
-     and adds it at user scope.
-   - Then they restart Claude Code **in the repo folder** and say *"continue onboarding"*.
+   - Then, **in their own terminal** (not through you — you're not allowed to run it):
+     `python3 tools/connect.py` from the repo folder (Windows: `py tools/connect.py` in
+     PowerShell or Windows Terminal). It asks for the URL with hidden input, offers
+     read-only mode, tests it, and adds it at user scope to the agents it finds (Claude
+     Code, Codex, Gemini CLI); for others it says where to paste it.
+   - **Exports need either a browser tool or a token.** If you can't drive a browser
+     (Codex, Gemini CLI, Claude Code in a plain terminal…), tell them to say *yes* to the
+     script's second question: it stores their local address and a long-lived token in the
+     git-ignored `.env` for `tools/collect-cli.mjs` (needs Node 22+).
+   - Then they restart their agent **in the repo folder** and say *"continue onboarding"*.
      Stop here and tell them exactly that.
-3. They'd rather not use MCP → the browser fallback (they log in, you run
-   `tools/collect.js`) or the terminal collector (they put `HA_URL`/`HA_TOKEN` in `.env`
-   themselves, see `.env.example`). Either works for the export; changes later go
-   through the browser or as YAML they paste.
+3. They'd rather not use MCP → exports still work (browser tool, or the token from
+   `connect.py`); changes then go through the browser or as YAML they paste.
 
 ## Step 6 — First export
 
@@ -170,7 +184,7 @@ Commit: `docs: house profile and architecture`.
     Assist exposure of anything that unlocks/opens/disarms, dashboards against
     `docs/dashboards.md`, and pending updates with breaking changes (AGENTS.md §7a).
     Write findings to `docs/known-issues.md`, commit `docs: initial audit`, and suggest
-    re-running `bash tools/connect-mcp.sh` without read-only when they're ready to fix things.
+    re-running `python3 tools/connect.py` without read-only when they're ready to fix things.
   - *New install:* the foundations in `docs/guides/new-install.md` (areas and floors,
     backups, people and presence, modes as helpers, automation engine, first automation,
     first dashboard), one at a time, each its own commit.

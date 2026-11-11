@@ -8,7 +8,7 @@
   setup; `ha-sync` covers collect → sync → commit and runs at the end of every change.
 - Load `home-assistant-best-practices` first on any Home Assistant request.
 - MCP servers are added at **user scope**, never in a repo `.mcp.json`: an ha-mcp connect
-  URL *is* the credential. The user runs `bash tools/connect-mcp.sh` in their own terminal;
+  URL *is* the credential. The user runs `python3 tools/connect.py` in their own terminal;
   you never see or handle the URL. If `ha_*` tools aren't
   available in a session, fall back to the browser (AGENTS.md §6).
 - Browser work happens in Claude's browser tool on the **local** HA URL. Large JavaScript

@@ -5,7 +5,8 @@
 <p align="center">
   <a href="https://github.com/deanlongstaff/ha-agent-kit/generate"><img src="https://img.shields.io/badge/Use_this_template-2ea44f?style=for-the-badge&logo=github" alt="Use this template"></a>
   <a href="https://www.home-assistant.io"><img src="https://img.shields.io/badge/Home_Assistant-2026.11+-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white" alt="Home Assistant 2026.11+"></a>
-  <a href="https://claude.com/claude-code"><img src="https://img.shields.io/badge/Built_for-Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Built for Claude Code"></a>
+  <a href="#-works-with-your-agent-on-your-computer"><img src="https://img.shields.io/badge/Agents-Claude_Code_·_Codex_·_Gemini_·_more-D97757?style=for-the-badge" alt="Works with Claude Code, Codex, Gemini CLI and more"></a>
+  <a href="#-works-with-your-agent-on-your-computer"><img src="https://img.shields.io/badge/OS-Windows_·_macOS_·_Linux-6366f1?style=for-the-badge" alt="Windows, macOS and Linux"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT licence"></a>
 </p>
 
@@ -57,10 +58,11 @@ The repo can't drift into a fantasy version of your home.
 
 ## 🚀 Quick start — one prompt
 
-You need Home Assistant and [Claude Code](https://claude.com/claude-code) (terminal,
-desktop app or IDE). That's it: the agent sets up everything else.
+You need Home Assistant and an AI coding agent: [Claude Code](https://claude.com/claude-code)
+(recommended), Codex, Gemini CLI, Cursor, Copilot… On Windows, macOS or Linux. That's it:
+the agent sets up everything else.
 
-Open Claude Code in the folder where you keep projects and paste:
+Open your agent in the folder where you keep projects and paste:
 
 ```text
 Set up HA Agent Kit for my Home Assistant: make me a private copy of
@@ -76,13 +78,13 @@ Then answer a few questions. ☕
 | 2 | Installs what's needed — inside the repo, nothing system-wide | 🤖 |
 | 3 | Asks about your home: new or existing, install type, built-in automations or Node-RED | 🙋 you answer |
 | 4 | Builds your privacy denylist (codes and PINs you type yourself) | 🙋 + 🤖 |
-| 5 | Walks you through connecting Home Assistant; you paste the secret URL into `bash tools/connect-mcp.sh` in your own terminal, never the chat | 🙋 + 🤖 |
+| 5 | Walks you through connecting Home Assistant; you paste the secret URL into `python3 tools/connect.py` in your own terminal, never the chat | 🙋 + 🤖 |
 | 6 | Exports everything, checks it for personal data, makes the first commit | 🤖 |
 | 7 | Writes your house docs, asking only what it can't work out | 🤖 |
 | 8 | Pushes to a private GitHub repo and suggests what to do next | 🤖 |
 
-There's one restart in the middle (Claude Code picks up a new connection when it starts):
-open it again in your `my-home` folder and say ***"continue onboarding"***.
+There's one restart in the middle (agents pick up a new connection when they start): open
+it again in your `my-home` folder and say ***"continue onboarding"***.
 
 <p align="center">
   <img src="assets/onboarding.svg" alt="Example onboarding session: health check, read-only connection, privacy denylist, first export of dashboards, automations, helpers and Node-RED tabs, then an initial snapshot commit" width="88%">
@@ -93,12 +95,33 @@ open it again in your `my-home` folder and say ***"continue onboarding"***.
 
 1. **[Use this template](https://github.com/deanlongstaff/ha-agent-kit/generate)** → **Private**
    ([why](SECURITY.md#4-keep-your-home-repo-private)) → clone it and `cd` into it.
-2. `bash tools/setup.sh` — checks git and Python, installs PyYAML privately, enables the safety hook.
+2. `python3 tools/setup.py` — checks git and Python, installs PyYAML privately, enables the safety hook.
 3. Install [ha-mcp](https://github.com/homeassistant-ai/ha-mcp) in Home Assistant
-   ([guide](docs/guides/mcp-setup.md)), then `bash tools/connect-mcp.sh` to connect it to Claude Code.
-4. `claude`, then: ***"continue onboarding"***.
+   ([guide](docs/guides/mcp-setup.md)), then `python3 tools/connect.py` to connect it to your agent.
+4. Start your agent in the folder, then: ***"continue onboarding"***.
+
+On Windows, type `py` instead of `python3`.
 
 </details>
+
+## 🤖 Works with your agent, on your computer
+
+| | Claude Code | Codex | Gemini CLI | Cursor · Copilot · others |
+|---|---|---|---|---|
+| Reads the rules (`AGENTS.md`) | ✅ via `CLAUDE.md` | ✅ | ✅ via `.gemini/settings.json` | ✅ |
+| Skills (onboarding, sync, best practices) | ✅ `.claude/skills/` | ✅ `.agents/skills/` | ✅ `.agents/skills/` | ✅ either folder¹ |
+| `connect.py` adds ha-mcp for you | ✅ | ✅ | ✅ | tells you where to paste it |
+| Exports | browser tool² or terminal | terminal | terminal | terminal |
+| Safety rails | git hook + CI + agent permissions | git hook + CI | git hook + CI | git hook + CI |
+
+¹ `tools/setup.py` copies the skills to `.agents/skills/`, where most agents look; an agent
+that doesn't load skills by itself is told by `AGENTS.md` to read the right `SKILL.md`.
+² Claude desktop app or Claude in Chrome. Terminal exports need Node 22+ and a token that
+`connect.py` stores in the git-ignored `.env`.
+
+**Windows, macOS and Linux** are all supported and tested on every push: every tool is
+Python or Node, files are written as UTF-8 with LF line endings, and the git hook runs
+under Git for Windows. On Windows, type `py` where the docs say `python3`.
 
 ## 🛤️ Pick your path
 
@@ -249,9 +272,9 @@ tools/
   automation_lint.py      house rules for HA automations and scripts
   function_lint.py        house rules for Node-RED function nodes
   doctor.py               setup checker
-  setup.sh                one-time local setup (private .venv, hooks, denylist)
-  connect-mcp.sh          connect Claude Code to ha-mcp; the URL never touches the chat
-  update_kit.sh           pull kit updates without touching your home's files
+  setup.py                one-time local setup (private .venv, hooks, denylist, skills copy)
+  connect.py              YOU run it: connects your agent(s) to ha-mcp; secrets never touch the chat
+  update_kit.py           pull kit updates without touching your home's files
 assets/                   the images in this README (onboarding removes them from your copy)
 ```
 
@@ -263,8 +286,8 @@ scenes, helpers, inventory) and, if you use it, `node-red/` (one file per tab).
 | | |
 |---|---|
 | Home Assistant | 2026.8+ recommended (ha-mcp integration). HA OS / Supervised get the full export (add-ons, Node-RED, config files); Container / Core get everything else. |
-| Agent | Claude Code (skills auto-load). Other agents that read `AGENTS.md` (Codex, Cursor, Gemini CLI, Copilot…) can follow the rules and use the tools. |
-| Local tools | git and Python 3.9+ (the agent checks and helps install them; PyYAML goes in a private `.venv`). Node 22+ only for the terminal collector. |
+| Agent | Claude Code, Codex, Gemini CLI, Cursor, Copilot or any agent that reads `AGENTS.md` — [details](#-works-with-your-agent-on-your-computer). |
+| Computer | Windows, macOS or Linux. git and Python 3.9+ (the agent checks and helps install them; PyYAML goes in a private `.venv`). Node 22+ for terminal exports. |
 | Optional | Node-RED add-on, Studio Code Server add-on (for raw config files), `gh` CLI. |
 
 ## 🔄 Updating the kit
@@ -273,7 +296,7 @@ Your repo is yours, but the kit keeps improving. Pull new tools, skills and rule
 touching your house's files:
 
 ```bash
-tools/update_kit.sh
+python3 tools/update_kit.py
 git diff                       # review
 git commit -am "chore(repo): update HA Agent Kit"
 ```
@@ -312,11 +335,13 @@ change to apply. Exports work from the browser (`tools/collect.js`) or the termi
 </details>
 
 <details>
-<summary><b>Will it work with ChatGPT / Codex / Cursor / Gemini?</b></summary>
+<summary><b>Will it work with Codex / Gemini / Cursor / Copilot?</b></summary>
 
-`AGENTS.md` is a cross-tool standard, and the tools are plain Python and JavaScript. It's
-built and tested with Claude Code, whose skills load automatically; other agents can read
-the skill files when pointed at them.
+Yes — see [Works with your agent](#-works-with-your-agent-on-your-computer). The rules are
+in `AGENTS.md`, the skills use the open `SKILL.md` format, and `connect.py` sets up ha-mcp
+for Claude Code, Codex and Gemini CLI. It was built day-to-day with Claude Code, which has
+the extra comforts: a browser tool for exports and per-tool permissions that stop the
+agent reading `.env` or running `connect.py`.
 </details>
 
 <details>

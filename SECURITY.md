@@ -30,11 +30,17 @@ kit keeps that sane. The short version:
 
 ## 2. Credentials
 
-- **The ha-mcp connect URL is a credential.** `bash tools/connect-mcp.sh` adds it at *user*
+- **The ha-mcp connect URL is a credential.** `python3 tools/connect.py` adds it at *user*
   scope with hidden input, so it never passes through the agent's chat or your shell
   history. The agent is denied running that script; you run it yourself. Never in a repo `.mcp.json`, an issue or a screenshot.
-- **Long-lived tokens** (only for `tools/collect-cli.mjs`) live in a git-ignored `.env` or,
-  better, come from your password manager at run time.
+- **Long-lived tokens** (only for terminal exports with `tools/collect-cli.mjs`) are stored
+  by `tools/connect.py` with hidden input in the git-ignored `.env` (owner-only permissions on
+  macOS/Linux), or come from your password manager at run time. Create them as the dedicated
+  ha-mcp user, so revoking one never touches your own login.
+- **Agent permissions.** Claude Code gets `.claude/settings.json`, which denies reading
+  `.env`, `secrets.yaml` and the denylist, running `connect.py`, and `--no-verify`. Other
+  agents follow the same rules from `AGENTS.md`; if yours has its own permission or sandbox
+  settings (Codex approval modes, Gemini CLI policies), mirror those denials there.
 - **The agent never types passwords.** You log in to HA in the browser; you enter
   integration credentials and Node-RED credential env vars yourself. AGENTS.md tells the
   agent to ask you rather than to ask for the secret.

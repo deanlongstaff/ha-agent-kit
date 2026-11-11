@@ -29,13 +29,13 @@ Loader.add_multi_constructor("!", lambda loader, suffix, node: None)
 errors = []
 for p in ROOT.rglob("*"):
     rel = p.relative_to(ROOT).as_posix()
-    if not p.is_file() or rel.startswith((".git/", ".export/", ".claude/skills/", "node_modules/")):
+    if not p.is_file() or rel.startswith((".git/", ".export/", ".claude/skills/", ".agents/", ".venv/", "node_modules/")):
         continue
     try:
         if p.suffix in (".yaml", ".yml"):
-            yaml.load(p.read_text(), Loader=Loader)
+            yaml.load(p.read_text(encoding="utf-8"), Loader=Loader)
         elif p.suffix == ".json":
-            json.loads(p.read_text())
+            json.loads(p.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001
         errors.append(f"{rel}: {e}")
 

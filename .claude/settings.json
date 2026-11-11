@@ -9,12 +9,17 @@
       "Bash(git commit --no-verify:*)",
       "Bash(git commit -n:*)",
       "Bash(git push --force:*)",
-      "Bash(tools/connect-mcp.sh:*)",
-      "Bash(bash tools/connect-mcp.sh:*)"
+      "Bash(python3 tools/connect.py:*)",
+      "Bash(python3 tools/connect.py:*)",
+      "Bash(python tools/connect.py:*)",
+      "Bash(py tools/connect.py:*)"
     ],
     "allow": [
-      "Bash(tools/setup.sh)",
-      "Bash(bash tools/setup.sh)",
+      "Bash(python3 tools/setup.py)",
+      "Bash(python tools/setup.py)",
+      "Bash(py tools/setup.py)",
+      "Bash(python3 tools/update_kit.py)",
+      "Bash(python3 tools/setup.py)",
       "Bash(python3 tools/sync.py:*)",
       "Bash(python3 tools/check_secrets.py:*)",
       "Bash(python3 tools/validate.py:*)",

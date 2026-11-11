@@ -15,10 +15,10 @@ NR = Path(__file__).resolve().parent.parent / "node-red"
 
 
 def build() -> list:
-    idx = json.loads((NR / "index.json").read_text())
-    out = json.loads((NR / idx["config_nodes"]).read_text())
+    idx = json.loads((NR / "index.json").read_text(encoding="utf-8"))
+    out = json.loads((NR / idx["config_nodes"]).read_text(encoding="utf-8"))
     for item in idx["subflows"] + idx["tabs"]:
-        out += json.loads((NR / item["file"]).read_text())
+        out += json.loads((NR / item["file"]).read_text(encoding="utf-8"))
     return out
 
 

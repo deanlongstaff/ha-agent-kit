@@ -82,7 +82,7 @@ def items():
     """(key, kind, name, config) for every exported automation and script."""
     for kind, folder in (("automation", "automations"), ("script", "scripts")):
         for p in sorted((HA / folder).glob("*.yaml")):
-            cfg = yaml.load(p.read_text(), Loader=Loader) or {}
+            cfg = yaml.load(p.read_text(encoding="utf-8"), Loader=Loader) or {}
             key = str(cfg.get("id")) if kind == "automation" else f"script.{cfg.get('id') or p.stem}"
             yield key, kind, cfg.get("alias") or p.stem, cfg
 
@@ -90,12 +90,13 @@ def items():
 def load_baseline() -> dict:
     if not BASELINE.exists():
         return {}
-    data = json.loads(BASELINE.read_text())
+    data = json.loads(BASELINE.read_text(encoding="utf-8"))
     return data if isinstance(data, dict) else {k: "existing before the kit" for k in data}
 
 
 def save_baseline(data: dict):
-    BASELINE.write_text(json.dumps(dict(sorted(data.items())), indent=2, ensure_ascii=False) + "\n")
+    with open(BASELINE, "w", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(dict(sorted(data.items())), indent=2, ensure_ascii=False) + "\n")
 
 
 def check() -> list[str]:

@@ -33,7 +33,7 @@ def problems(node):
 
 
 def check(flows):
-    baseline = set(json.loads(BASELINE.read_text())) if BASELINE.exists() else set()
+    baseline = set(json.loads(BASELINE.read_text(encoding="utf-8"))) if BASELINE.exists() else set()
     tabs = {n["id"]: n.get("label") for n in flows if n.get("type") == "tab"}
     errors = []
     for n in flows:
@@ -53,11 +53,12 @@ if __name__ == "__main__":
     flows = build()
     if "--baseline" in sys.argv:
         ids = sorted(n["id"] for n in flows if n.get("type") == "function" and problems(n))
-        BASELINE.write_text(json.dumps(ids, indent=2) + "\n")
+        with open(BASELINE, "w", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps(ids, indent=2) + "\n")
         print(f"function_lint: grandfathered {len(ids)} existing function nodes in {BASELINE.relative_to(ROOT)}")
         sys.exit(0)
     if "--prune" in sys.argv:
-        baseline = json.loads(BASELINE.read_text()) if BASELINE.exists() else []
+        baseline = json.loads(BASELINE.read_text(encoding="utf-8")) if BASELINE.exists() else []
         byid = {n["id"]: n for n in flows}
         gone = [i for i in baseline if i not in byid or not problems(byid[i])]
         print("baseline entries that can be removed:", gone or "none")
