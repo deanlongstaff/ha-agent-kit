@@ -24,6 +24,7 @@ from _env import ensure_yaml  # noqa: E402
 yaml = ensure_yaml()
 from nodered_build import build as build_flows  # noqa: E402
 from redact import redact_addon_options, redact_emails, redact_yaml_text  # noqa: E402
+from _env import PRIVACY_TERMS, privacy_level  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 HA, NR, REF = ROOT / "homeassistant", ROOT / "node-red", ROOT / "docs" / "reference"
@@ -45,8 +46,13 @@ def dump_yaml(obj) -> str:
     return yaml.dump(obj, Dumper=Dumper, sort_keys=False, allow_unicode=True, width=4096, default_flow_style=False)
 
 
+HIDE = None  # set at privacy level 'strict': hides learned names in generated, informational files
+
+
 def write(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
+    if HIDE and (HA / "inventory" in path.parents or REF in path.parents):
+        text = HIDE.sub("(hidden)", text)
     with open(path, "w", encoding="utf-8", newline="\n") as f:  # LF on every OS
         f.write(text if text.endswith("\n") else text + "\n")
 
@@ -424,12 +430,34 @@ def roundtrip(b: dict, dashboards: list[str]):
         assert a == o, "Node-RED flows do not round-trip"
 
 
+GENERIC = {"home", "work", "school", "office", "zone", "the", "and", "mum", "dad"}
+
+
+def learn_names(b: dict) -> list[str]:
+    """People's names (each word), zone names and the home's name: what 'strict' keeps out of the repo."""
+    n = b.get("privacy_names") or {}
+    ents = (b.get("registry") or {}).get("entities") or []
+    named = lambda prefix: [e.get("name") or e.get("original_name") or "" for e in ents if e["entity_id"].startswith(prefix)]
+    people = [*(n.get("people") or []), *named("person.")]
+    terms = {w for p in people for w in re.findall(r"[^\W\d_]{3,}", p)}
+    terms |= {z.strip() for z in [*(n.get("zones") or []), *named("zone."), n.get("home") or ""] if z.strip()}
+    return sorted(t for t in terms if t.lower() not in GENERIC)
+
+
 def main():
+    global HIDE
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     b = load_bundle(Path(sys.argv[1]))
     (ROOT / ".export").mkdir(exist_ok=True)
     (ROOT / ".export" / "bundle.json").write_text(json.dumps(b), encoding="utf-8")
+    terms = learn_names(b)
+    with open(PRIVACY_TERMS, "w", encoding="utf-8", newline="\n") as f:
+        f.write("# Learned from Home Assistant by tools/sync.py; used at privacy level 'strict'. Never committed.\n"
+                + "".join(t + "\n" for t in terms))
+    level = privacy_level()
+    if level == "strict" and terms:
+        HIDE = re.compile("|".join(rf"(?<![\w]){re.escape(t)}(?![\w])" for t in sorted(terms, key=len, reverse=True)), re.I)
 
     dashboards = sync_dashboards(b)
     themes = sync_themes(b)
@@ -448,7 +476,8 @@ def main():
     meta = b.get("meta", {})
     write_yaml(ROOT / "homeassistant" / "export-info.yaml", {"ha_version": meta.get("ha_version"), "exported_at": meta.get("exported_at")},
                "When the files in this repo were last exported from the live system")
-    print(f"HA {meta.get('ha_version')} exported {meta.get('exported_at')}")
+    print(f"HA {meta.get('ha_version')} exported {meta.get('exported_at')} · privacy {level}"
+          + (f" ({len(terms)} names hidden in inventory, blocked elsewhere)" if level == "strict" else ""))
     nodes = len(b["nodered"]["flows"]) if nr else 0
     print(f"dashboards={len(dashboards)} automations={autos['automations']} scripts={autos['scripts']} scenes={autos['scenes']} "
           f"node-red nodes={nodes} files={len(files)}")

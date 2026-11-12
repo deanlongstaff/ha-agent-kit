@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from _env import utf8_console, venv_python  # noqa: E402
+from _env import PRIVACY_TERMS, privacy_level, utf8_console, venv_python  # noqa: E402
 
 utf8_console()
 OK, WARN, FAIL = "✅", "⚠️ ", "❌"
@@ -78,6 +78,12 @@ if env.exists() and "HA_TOKEN=" in env.read_text(encoding="utf-8") and "HA_TOKEN
 if (ROOT / ".mcp.json").exists():
     add(FAIL, ".mcp.json in the repo", "MCP URLs are credentials: add the server at user scope (claude mcp add --scope user …) and delete .mcp.json")
 
+# Privacy level
+level = privacy_level()
+learned = [l for l in PRIVACY_TERMS.read_text(encoding="utf-8").splitlines() if l and not l.startswith("#")] if PRIVACY_TERMS.exists() else []
+add(OK, f"privacy level: {level}" + (f" ({len(learned)} names learned from HA)" if level == "strict" else ""),
+    "" if level != "strict" or learned else "run a sync so strict mode learns the names to keep out")
+
 # GitHub remote visibility
 remote = run("git", "remote", "get-url", "origin")
 if not remote:
@@ -89,8 +95,13 @@ elif shutil.which("gh"):
         if v.get("nameWithOwner", "").lower().endswith("/ha-agent-kit") and v.get("visibility") == "PUBLIC":
             add(FAIL, f"origin is the public kit itself ({v['nameWithOwner']})",
                 "make your own private copy: ask your agent to 'set up HA Agent Kit', or: git remote remove origin")
+        elif v.get("visibility") == "PUBLIC" and level == "strict":
+            add(WARN, f"{v['nameWithOwner']} is PUBLIC (privacy: strict)",
+                "fine if you mean to share it; re-read SECURITY.md › Privacy levels before each push")
         elif v.get("visibility") == "PUBLIC":
-            add(FAIL, f"{v['nameWithOwner']} is PUBLIC", "your home config should be private: gh repo edit --visibility private --accept-visibility-change-consequences")
+            add(FAIL, f"{v['nameWithOwner']} is PUBLIC at privacy level '{level}'",
+                "make it private (gh repo edit --visibility private --accept-visibility-change-consequences), "
+                "or set level: strict in privacy.yaml if you mean to publish it")
         else:
             add(OK, f"{v['nameWithOwner']} is {v.get('visibility', '?').lower()}")
     except (json.JSONDecodeError, KeyError):

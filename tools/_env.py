@@ -19,6 +19,18 @@ def utf8_console():
             pass
 
 
+LEVELS = ("relaxed", "standard", "strict")
+PRIVACY_TERMS = ROOT / ".export" / "privacy-terms.txt"  # names learned by sync at strict level (git-ignored)
+
+
+def privacy_level() -> str:
+    """The `level:` in privacy.yaml (relaxed / standard / strict); standard if missing or unknown."""
+    import re
+    p = ROOT / "privacy.yaml"
+    m = re.search(r"^level:\s*([a-z]+)", p.read_text(encoding="utf-8"), re.M) if p.exists() else None
+    return m.group(1) if m and m.group(1) in LEVELS else "standard"
+
+
 def venv_python():
     return next((p for p in VENV_PYTHONS if p.exists()), None)
 

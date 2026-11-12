@@ -21,9 +21,11 @@ for this home's specifics (install type, URLs, people, notify targets, quirks).
    See section 5. A task is not finished until the commit exists.
 2. **Never commit sensitive data.** No passwords, tokens or keys of any kind, alarm or
    door codes, e-mail addresses, phone numbers, home coordinates, addresses, or MCP
-   connect URLs. `tools/sync.py` redacts, `tools/check_secrets.py` blocks. If a check
-   fails, fix the redaction — never bypass the hook (`--no-verify`) and never put a real
-   value in an allowlist.
+   connect URLs. `tools/sync.py` redacts, `tools/check_secrets.py` blocks — how strictly
+   personal data is treated follows the owner's level in `privacy.yaml` (never change it
+   yourself). If a check fails, fix the redaction — never bypass the hook (`--no-verify`)
+   and never put a real value in an allowlist. At `strict`, a blocked name means renaming
+   it in Home Assistant (ask first), not hiding it.
 3. **Never handle credentials.** The owner logs in and types secrets themselves (Node-RED
    credential env vars, integration passwords, tokens, MCP URLs via `tools/connect.py`).
    Ask them to; don't ask them to paste a secret into chat. Never read or print `.env`,

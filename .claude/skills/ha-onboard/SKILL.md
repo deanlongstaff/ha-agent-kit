@@ -92,8 +92,18 @@ if they don't use it.
 
 ## Step 4 — Privacy first
 
-Explain in one sentence: the denylist blocks any commit containing things that identify
-them but don't look secret. Ask for: surname, street, town, postcode/ZIP, Wi-Fi name,
+First the **privacy level** (`privacy.yaml`, explained in `SECURITY.md` › Privacy levels).
+Ask who will see the repo:
+- *"Only me, private"* and they're relaxed about it → `relaxed` (e-mails, phone numbers and
+  coordinates only warn).
+- *"Private"* → `standard` (the default; keep it unless they choose otherwise).
+- *"I want to share it publicly"* → `strict`: names of people, zones and the home are
+  blocked and hidden in the inventory. Warn them it's more work (things named after people
+  get renamed, ideally to roles) and that the doctor only accepts a public repo at this level.
+Secrets are blocked at every level — say so. Set `level:` in `privacy.yaml`.
+
+Then the denylist. Explain in one sentence: it blocks any commit containing things that
+identify them but don't look secret, at every level. Ask for: surname, street, town, postcode/ZIP, Wi-Fi name,
 public domain, family names if they'd rather keep them out. Append each with
 `printf '%s\n' 'Value' >> .secrets-denylist` (you're denied *reading* the file on purpose
 — it may hold codes).
@@ -133,7 +143,9 @@ Check what you already have, best first:
 
 Follow the `ha-sync` skill steps 1–2 (collect → sync → checks), but **don't commit yet**.
 
-Review the export for anything personal the rules didn't catch. Grep for the words they
+Review the export for anything personal the rules didn't catch (at `strict`, the
+scanner already blocks learned names — work through each block with them: rename in HA, or
+allowlist a deliberate exception). Grep for the words they
 gave you and look at `inventory/devices.csv` and `entities.csv` (devices named after
 people — "Sam's iPhone"), `integrations.yaml` titles (account names, addresses), and
 `zone.*` entities. Show anything doubtful and let them choose: denylist it (the commit is

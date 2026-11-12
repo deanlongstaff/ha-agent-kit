@@ -56,10 +56,35 @@ kit keeps that sane. The short version:
 2. **Your denylist** (`.secrets-denylist`, git-ignored): your surname, street, postcode,
    Wi-Fi name, alarm code — things that don't *look* secret but identify you.
 3. **Pre-commit hook** (`tools/check_secrets.py --staged`): blocks tokens, keys, JWTs,
-   private keys, URLs with passwords, ha-mcp and webhook URLs, e-mail addresses, phone
-   numbers, precise coordinates and every denylist entry.
+   private keys, URLs with passwords, ha-mcp and webhook URLs and every denylist entry —
+   plus personal data according to your [privacy level](#privacy-levels).
 4. **CI** re-runs the scan and [gitleaks](https://github.com/gitleaks/gitleaks) over the
    full history on every push.
+
+### Privacy levels
+
+People differ in how much of their home they're happy to have in git. Pick a level in
+`privacy.yaml` (onboarding asks); change it any time.
+
+| | relaxed | standard (default) | strict |
+|---|---|---|---|
+| For | A private repo only you read | A private repo | Publishing your config |
+| Secrets: keys, tokens, passwords, MCP/webhook URLs | 🚫 block | 🚫 block | 🚫 block |
+| Your `.secrets-denylist` | 🚫 block | 🚫 block | 🚫 block |
+| E-mails, phone numbers, precise coordinates | ⚠️ warn | 🚫 block | 🚫 block |
+| People's names, zone names, your home's name | ✅ allowed | ✅ allowed | 🚫 block, hidden in inventory |
+| Public GitHub repo (`doctor.py`) | ❌ | ❌ | ⚠️ allowed |
+
+Secrets are never negotiable: there's no level at which a leaked token is fine.
+
+**How strict works.** Every sync learns the names of the people and zones in Home Assistant
+and your home's name, and keeps them in the git-ignored `.export/privacy-terms.txt`. The
+generated inventory and reference pages show them as `(hidden)`. Anywhere else — a dashboard
+card, an automation called "Notify Sam" — the commit is blocked, because those files have to
+stay restorable: rename the thing in Home Assistant (roles work well: "Notify parents"), or
+allowlist a deliberate exception. Strict lowers the risk of publishing; it can't remove it.
+Even at strict, read the diff before every public push: room layouts, cameras and routines
+still describe your home.
 
 If a check fails: fix the redaction rule (`tools/redact.py`), re-sync, and commit again.
 Never `--no-verify`, never allowlist a real value. If a secret ever *was* pushed, rotate
@@ -70,7 +95,8 @@ it — rewriting history doesn't un-leak it.
 This kit is public; **your copy of it should be private.** Even fully redacted, an export
 describes your home: rooms, cameras and where they point, door sensors, when the alarm
 arms, when "vacation mode" kicks in, which devices are on which network. `tools/doctor.py`
-warns if your remote is public.
+fails a public remote unless you've chosen the `strict` [privacy level](#privacy-levels)
+on purpose.
 
 Want to share something? Copy the one automation or card into a gist, read it first, then share.
 
