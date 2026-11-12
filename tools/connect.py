@@ -51,6 +51,15 @@ def yes(prompt: str, default: bool) -> bool:
     return default if not a else a.startswith("y")
 
 
+def secret(prompt: str) -> str:
+    """Hidden input in a terminal. getpass reads the Windows console directly, so piped input
+    (scripts, tests) would hang it: read those normally."""
+    if sys.stdin.isatty():
+        return getpass.getpass(prompt)
+    print(prompt, end="", flush=True)
+    return sys.stdin.readline().strip()
+
+
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
     exe = shutil.which(cmd[0]) or cmd[0]  # resolves .cmd/.exe shims on Windows
     return subprocess.run([exe, *cmd[1:]], capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -79,7 +88,7 @@ Copy the connect URL from Home Assistant:
   Settings › Devices & services › HA-MCP › Configure
 It looks like  http://<ha-ip>:9584/private_…   (treat it like a password)
 """)
-    url = re.sub(r"\s+", "", getpass.getpass("Paste the URL (input hidden), then press Enter: ")).rstrip("/")
+    url = re.sub(r"\s+", "", secret("Paste the URL (input hidden), then press Enter: ")).rstrip("/")
     if not re.match(r"^https?://[^/]+/.*private_[^/]+", url):
         print("That doesn't look like an ha-mcp connect URL (…/private_<secret>). Nothing changed.")
         return False
@@ -142,7 +151,7 @@ Tip: sign in as your dedicated ha-mcp user first, so revoking it never touches y
     env = ROOT / ".env"
     current = env.read_text(encoding="utf-8") if env.exists() else ""
     ha_url = ask("Local Home Assistant address [http://homeassistant.local:8123]: ", "http://homeassistant.local:8123").rstrip("/")
-    token = getpass.getpass("Paste the token (input hidden): ").strip()
+    token = secret("Paste the token (input hidden): ").strip()
     if not token:
         print("No token given. Nothing changed.")
         return

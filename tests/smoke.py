@@ -25,8 +25,11 @@ failures: list[str] = []
 
 def run(*args, stdin: str | None = None, cwd: Path) -> subprocess.CompletedProcess:
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
-    return subprocess.run([PY, *args], cwd=cwd, input=stdin, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", env=env)
+    try:
+        return subprocess.run([PY, *args], cwd=cwd, input=stdin if stdin is not None else "", capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", env=env, timeout=180)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(args, 124, "", f"TIMED OUT: {' '.join(args)}")
 
 
 def check(name: str, cond: bool, detail: str = ""):
