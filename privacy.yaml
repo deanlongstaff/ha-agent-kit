@@ -1,0 +1,12 @@
+# How strictly personal data is kept out of this repo. Secrets (tokens, keys, passwords,
+# MCP and webhook URLs) and anything in your .secrets-denylist are blocked at EVERY level.
+#
+#   relaxed   Private repo, you're the only reader. E-mails, phone numbers and precise
+#             coordinates are reported as warnings; the commit still goes through.
+#   standard  Private repo (the default). Those are blocked too.
+#   strict    For publishing your config. Also blocks people's names, zone names and your
+#             home's name (learned from Home Assistant on each sync), and hides them in the
+#             exported inventory. The only level at which `doctor.py` accepts a public repo.
+#
+# Change it any time; the next commit uses the new level. More: SECURITY.md › Privacy levels.
+level: standard

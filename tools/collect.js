@@ -36,6 +36,9 @@
   const errors = [];
   const safe = async (label, fn) => { try { return await fn(); } catch (e) { errors.push(`${label}: ${e?.message || e?.error || JSON.stringify(e)}`); return null; } };
   const out = { schema: 1, meta: { ha_version: hass.config.version, exported_at: new Date().toISOString(), errors } };
+  // Names the 'strict' privacy level keeps out of the repo (kept only in the git-ignored .export/)
+  const named = (prefix) => Object.values(hass.states).filter((s) => s.entity_id.startsWith(prefix)).map((s) => s.attributes.friendly_name).filter(Boolean);
+  out.privacy_names = { home: hass.config.location_name, people: named('person.'), zones: named('zone.') };
 
   // ── dashboards ────────────────────────────────────────────────────────────
   out.dashboards = {};

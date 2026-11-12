@@ -77,7 +77,7 @@ Then answer a few questions. ☕
 | 1 | Creates your **private** repo | 🤖 |
 | 2 | Installs what's needed — inside the repo, nothing system-wide | 🤖 |
 | 3 | Asks about your home: new or existing, install type, built-in automations or Node-RED | 🙋 you answer |
-| 4 | Builds your privacy denylist (codes and PINs you type yourself) | 🙋 + 🤖 |
+| 4 | Sets your privacy level (relaxed, standard, or strict for sharing) and builds your denylist | 🙋 + 🤖 |
 | 5 | Walks you through connecting Home Assistant; you paste the secret URL into `python3 tools/connect.py` in your own terminal, never the chat | 🙋 + 🤖 |
 | 6 | Exports everything, checks it for personal data, makes the first commit | 🤖 |
 | 7 | Writes your house docs, asking only what it can't work out | 🤖 |
@@ -241,7 +241,8 @@ More in **[prompts.md](docs/guides/prompts.md)**.
 | 📱 **Phone AI gets the minimum** | Claude on your phone uses HA's built-in MCP Server's device-control endpoint as a **non-admin** user — it can only reach what you expose to Assist. |
 | 🔑 **The agent never handles secrets** | You log in; you type passwords and codes. MCP URLs live in user config, never the repo. |
 | 🧹 **Nothing sensitive reaches git** | Redaction → denylist → pre-commit hook → CI + gitleaks over full history. |
-| 🔒 **Your repo stays private** | The kit is public; your home isn't. `doctor.py` shouts if your remote is public. |
+| 🎚️ **Your privacy, your level** | Secrets always block. Personal data follows `privacy.yaml`: **relaxed** (warn), **standard** (block), or **strict** for publishing — names of people and places blocked too. |
+| 🔒 **Your repo stays private** | The kit is public; your home isn't — unless you choose `strict` to share it. `doctor.py` shouts otherwise. |
 | ✋ **Destructive = ask first** | Deletes, restarts, restores and updates always need your OK. |
 
 Read the full model in **[SECURITY.md](SECURITY.md)**.

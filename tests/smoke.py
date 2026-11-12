@@ -62,7 +62,9 @@ def bundle() -> dict:
         "helpers": {"input_boolean": [{"id": "guest_mode", "name": "Guest mode", "icon": "mdi:account"}]},
         "registry": {"areas": [{"area_id": "cafe", "name": "Café", "floor_id": None}], "floors": [], "labels": [],
                      "devices": [{"id": "d1", "name": "Kitchen lamp", "area_id": "cafe", "manufacturer": "Acme", "model": "L1"}],
-                     "entities": [{"entity_id": "light.cafe", "name": "Café light", "platform": "hue", "device_id": "d1"}]},
+                     "entities": [{"entity_id": "light.cafe", "name": "Café light", "platform": "hue", "device_id": "d1"},
+                                  {"entity_id": "person.robin", "name": "Robin Example", "platform": "person"},
+                                  {"entity_id": "zone.home", "name": "Maple Cottage", "platform": "zone"}]},
         "integrations": [{"entry_id": "e1", "domain": "hue", "title": "someone" + AT + "gmail.com", "state": "loaded"}],
         "custom_integrations": [{"domain": "powercalc", "name": "Powercalc", "version": "1.0.0"}],
         "installed_versions": [{"entity_id": "update.node_red", "title": "Node-RED", "version": "19.0.0"}],
@@ -70,12 +72,16 @@ def bundle() -> dict:
         "automations": [
             {"id": "1", "alias": "Café lights at sunset", "description": "Warm light when it gets dark ☀️",
              "triggers": [{"trigger": "sun", "event": "sunset"}], "actions": [{"action": "light.turn_on", "target": {"area_id": "cafe"}}]},
+            {"id": "3", "alias": "Notify Robin", "description": "Tell Robin the washing is done",
+             "triggers": [{"trigger": "state", "entity_id": "sensor.washer", "to": "done"}],
+             "actions": [{"action": "notify.notify", "data": {"message": "Done"}}]},
             {"id": "2", "alias": "Old style", "description": "", "trigger": [{"platform": "state", "entity_id": "light.cafe"}],
              "action": [{"service": "light.turn_off", "target": {"device_id": "d1"}}]},
         ],
         "automations_without_id": [{"entity_id": "automation.legacy", "name": "Legacy", "state": "on"}],
         "scripts": {"good_night": {"alias": "Good night", "description": "Everything off", "sequence": [{"action": "light.turn_off", "target": {"area_id": "cafe"}}]}},
         "scenes": [],
+        "privacy_names": {"home": "Maple Cottage", "people": ["Robin Example", "Alex"], "zones": ["Home", "Office"]},
         "blueprints": {"automation": {}, "script": {}},
         "addons": [{"slug": "a0d7b954_nodered", "name": "Node-RED", "version": "19.0.0", "state": "started"}],
         "nodered": {"flows": flows},
@@ -126,6 +132,36 @@ def main():
         check("secret scan blocks a planted token", r.returncode == 1 and "GitHub token" in r.stdout, r.stdout)
         subprocess.run(["git", "rm", "-q", "--cached", "leak.txt"], cwd=repo, check=True)
         leak.unlink()
+
+        # privacy levels: personal data warns at relaxed, blocks at standard; secrets always block
+        note = repo / "note.md"
+        note.write_text("Ask Sam at sam.jones" + AT + "gmail.com or " + "+44 7700 " + "900123\n", encoding="utf-8")
+        subprocess.run(["git", "add", "note.md"], cwd=repo, check=True)
+        privacy = repo / "privacy.yaml"
+        for level, want in (("relaxed", 0), ("standard", 1)):
+            privacy.write_text(f"level: {level}\n", encoding="utf-8")
+            r = run("tools/check_secrets.py", "--staged", cwd=repo)
+            check(f"privacy {level}: e-mail and phone {'warn' if want == 0 else 'block'}", r.returncode == want and "e-mail address" in r.stdout, r.stdout)
+        privacy.write_text("level: relaxed\n", encoding="utf-8")
+        leak.write_text("token: " + "ghp_" + "b" * 36 + "\n", encoding="utf-8")
+        subprocess.run(["git", "add", "leak.txt"], cwd=repo, check=True)
+        check("privacy relaxed: secrets still block", run("tools/check_secrets.py", "--staged", cwd=repo).returncode == 1)
+        subprocess.run(["git", "rm", "-q", "--cached", "leak.txt", "note.md"], cwd=repo, check=True)
+        leak.unlink(); note.unlink()
+
+        # strict: sync learns people/zone/home names, hides them in inventory, blocks them elsewhere
+        privacy.write_text("level: strict\n", encoding="utf-8")
+        r = run("tools/sync.py", ".export/bundle.json", cwd=repo)
+        check("privacy strict: sync runs", r.returncode == 0 and "privacy strict" in r.stdout, r.stdout + r.stderr)
+        ents = txt(repo / "homeassistant" / "inventory" / "entities.csv")
+        check("privacy strict: names hidden in inventory", "(hidden)" in ents and "Robin" not in ents and "Maple Cottage" not in ents, ents[:400])
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+        r = run("tools/check_secrets.py", cwd=repo)
+        check("privacy strict: a person's name in an automation is blocked", r.returncode == 1 and "privacy: strict" in r.stdout
+              and "notify-robin" in r.stdout, r.stdout)
+        privacy.write_text("level: standard\n", encoding="utf-8")
+        r = run("tools/check_secrets.py", cwd=repo)
+        check("privacy standard: the same export passes", r.returncode == 0, r.stdout)
 
         r = run("tools/doctor.py", cwd=repo)
         check("doctor runs and prints its report", r.returncode in (0, 1) and "doctor" in r.stdout, r.stdout + r.stderr)

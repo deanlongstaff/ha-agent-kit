@@ -7,7 +7,7 @@
 Kit-owned (overwritten): AGENTS.md, CLAUDE.md, SECURITY.md, tools/, .githooks/,
   .github/workflows/, .claude/skills/, .claude/settings.json, .gemini/settings.json,
   docs/guides/, tests/, .gitleaks.toml, .env.example, .secrets-denylist.example
-Yours (never touched): README.md, CHANGELOG.md, docs/*.md, homeassistant/, node-red/,
+Yours (never touched): README.md, CHANGELOG.md, privacy.yaml, docs/*.md, homeassistant/, node-red/,
   tools/function_baseline.json, tools/automation_baseline.json, .claude/settings.local.json
 
 Nothing is committed: review `git diff`, then commit as `chore(repo): update HA Agent Kit`.
