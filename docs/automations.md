@@ -65,7 +65,10 @@ And by review:
    the timer" (motion lights), `queued` when every trigger must run, `parallel` rarely.
 6. **Fail-safes for anything time-limited.** A `delay` is lost on restart or reload. Boosts,
    timed fans and "off after N minutes" also need a trigger like
-   `state … for: "00:30:00"` or a check at `homeassistant` start.
+   `state … for: "00:30:00"` or a check at `homeassistant` start. And the other way round:
+   before adding or changing an automation, run `python3 tools/failsafes.py <entity> <group>`
+   so an existing fail-safe doesn't undo it
+   ([conventions.md](conventions.md#fail-safes)).
 7. **One behaviour per automation.** Easier to read, trace, disable and revert.
 8. **Seasonal automations are disabled out of season, not deleted** (add them to the
    [keep list](home.md#keep-list)).

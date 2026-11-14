@@ -57,6 +57,9 @@ that existed at your first sync are grandfathered in `tools/function_baseline.js
   global set by an *On start* inject) so a new phone means one edit.
 - **Context is memory-only.** Global/flow context and `delay`/`trigger` timers vanish on
   restart or full deploy. Anything that must end needs a fail-safe that re-checks state.
+  Before changing a flow, run `python3 tools/failsafes.py <entity> <group>` to see the polls,
+  schedules and `for` triggers that already act on its devices, so they don't undo your change
+  ([conventions.md](conventions.md#fail-safes)).
 - **Comments.** Split each tab into labelled areas with comment nodes; give tabs with
   non-obvious behaviour a description.
 

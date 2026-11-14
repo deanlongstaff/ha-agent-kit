@@ -47,6 +47,11 @@ for this home's specifics (install type, URLs, people, notify targets, quirks).
 8. **Exposure is reach.** Anything exposed to Assist can be controlled by every AI or
    voice assistant connected to this home. Ask before exposing locks, alarms, garage
    doors, cameras, sirens or power to infrastructure. See [SECURITY.md](SECURITY.md).
+9. **Fail-safes both ways.** Anything an automation leaves on gets a fail-safe that turns it
+   off if a timer is lost or an event is missed. Before you add or change an automation, find
+   the fail-safes and timeouts that already act on the same devices *and the groups and areas
+   they're in* (`python3 tools/failsafes.py <entity> <group>…`). Make sure they won't undo the
+   new behaviour, and that it won't stop them doing their job. Section 6b.
 
 ## 2. The system
 
@@ -90,7 +95,8 @@ node-red/            only if Node-RED is installed
 docs/                hand-written docs + docs/reference/ (GENERATED, don't edit)
 tools/               setup.py, connect.py (owner only), collect.js, collect-cli.mjs, sync.py,
                      check_secrets.py, validate.py, automation_lint.py, function_lint.py,
-                     doctor.py, update_kit.py — all Python/Node: Windows, macOS, Linux
+                     doctor.py, update_kit.py, failsafes.py (timed paths that act on an entity)
+                     — all Python/Node: Windows, macOS, Linux
 ```
 
 Use the repo to answer "where is X used?" before you touch X:
@@ -169,8 +175,40 @@ in", not "unavailable".
 - Context and `delay`/`trigger` timers are memory-only: anything that must turn *off*
   needs a fail-safe that survives a restart.
 
+**Fail-safes.** Check them before every new or changed automation (rule 9, section 6b).
+
 **Entities.** Before renaming or removing, grep the repo for every consumer and update
 them in the same change ([docs/conventions.md](docs/conventions.md)).
+
+## 6b. Fail-safes (every new or changed automation)
+
+Timers are lost on a restart or reload (HA `delay`, Node-RED `delay`/`trigger` and context),
+and events get missed. So a well-run home has **fail-safes**: polls, schedules and "quiet for
+N minutes" timeouts that put things back to a safe state from the *current* state. They run
+independently of the automation they protect, so they're easy to forget, and they will quietly
+undo new logic. A typical trap: a 15-second poll that switches off a light **group** when a room
+is empty also ends the scene, mood or boost you just added to one bulb in that group.
+
+**Before you build or change an automation:**
+1. List the devices it controls and every group, area and label they belong to
+   (`ha_get_state` → the group's `entity_id` attribute; `grep -rn` the repo for the entity).
+2. Run `python3 tools/failsafes.py --off <entity> <group> <area> …` (drop `--off` to see
+   every action). It lists each timed path in HA automations and Node-RED that acts on or checks
+   them, with its conditions. Payload-driven Node-RED nodes show the function that feeds
+   them: read it. It reads the repo, so sync first if the live system may have changed.
+3. For each one ask: will it undo what I'm adding? Will my change stop it doing its job?
+
+**When one conflicts:** teach the fail-safe about the new state with a native condition on the
+helper that marks it, and keep the rest of its job working (route the "skip" branch to what
+should still happen). Never disable or delete a fail-safe to make room for a feature. The marker
+must be cleared on **every** way out (turned off by an automation, by hand, by a remote, at a
+fixed end time), or the fail-safe stays bypassed for good. Keep markers in HA helpers, not
+memory.
+
+**When you add something that's left on** (lights, heaters, fans, boosts, modes), make sure
+a fail-safe covers it: a timed check of current state or `last_changed`, not a `delay`. Tell the
+owner which fail-safes you checked and changed. Details:
+[docs/conventions.md](docs/conventions.md#fail-safes).
 
 ## 7. Things that look dead but aren't
 
