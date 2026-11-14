@@ -40,6 +40,35 @@ House rules, the native-first table and how agents change automations:
 Both share the same ideas: a person can read it in the UI, shared rules are helpers,
 anything time-limited has a fail-safe, and seasonal automations are disabled, not deleted.
 
+## Fail-safes
+
+A fail-safe puts something back to a safe state from the current state, not from an event or
+a running timer, so it still works after a restart, a reload or a missed event. Common shapes:
+
+| Shape | Example | Catches out |
+|---|---|---|
+| Poll (`time_pattern`, or a Node-RED `inject` every N s) → conditions → off | Every 15 s: hall group on and no motion for 5 min → group off | Acts on **groups and areas**: anything new that holds one member on gets switched off |
+| "Quiet for N min" (`for:` on a state trigger) → off | Motion clear for 10 min → room lights off | Turns off whatever is showing now, including a scene you added |
+| Schedule (`time`, `sun`, Node-RED cron) → off | 23:00 night switch-off | Fires daily whatever the state; your feature must end with it or be known to it |
+| `last_changed` cap | Heater on for 2 h → off | A feature that legitimately runs longer must be known to the cap |
+| On start (`homeassistant: start`, Node-RED *on start*) | Boost found still on after a restart → off | Your feature's state after a restart |
+
+**Find them:** `python3 tools/failsafes.py [--off] <entity> <group> <area> …`. Name every
+group, area and label the entity belongs to, because a fail-safe on `light.ground_floor` or
+`area_id: hall` reaches the bulb inside it.
+
+**Rules**
+- Anything an automation leaves on has a fail-safe. Use a timed check of current state or
+  `last_changed`, not a `delay` (lost on restart), and give it a description that says what it
+  protects.
+- Before a new or changed automation, check the fail-safes on its devices (AGENTS.md §6b).
+- A conflict is fixed by teaching the fail-safe the new state with a native condition on a
+  helper (`input_boolean`, `input_text`, `input_select`), sending the "skip" branch to whatever
+  should still happen. Never by disabling or deleting the fail-safe.
+- Whatever marks "my feature is active" is cleared on every way out, or the fail-safe stays
+  bypassed for good.
+- Record the interaction in the feature's docs, so the next change sees it.
+
 ## Helpers
 
 Prefer the UI helper that fits (group, threshold, derivative, history stats, schedule,

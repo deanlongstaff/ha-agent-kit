@@ -48,6 +48,11 @@ def bundle() -> dict:
         {"id": "n1", "type": "inject", "z": "t1", "name": "Every morning", "wires": [["n2"]]},
         {"id": "n2", "type": "function", "z": "t1", "name": "Pick scene", "func": "msg.payload = 'ok';\nreturn msg;", "wires": [["n3"]]},
         {"id": "n3", "type": "debug", "z": "t1", "name": "", "wires": []},
+        {"id": "p1", "type": "inject", "z": "t1", "name": "Every 15 s", "repeat": "15", "wires": [["p2"]]},
+        {"id": "p2", "type": "api-current-state", "z": "t1", "name": "Group on", "entity_id": "light.ground_floor",
+         "halt_if": "on", "halt_if_compare": "is", "wires": [["p3"], []]},
+        {"id": "p3", "type": "api-call-service", "z": "t1", "name": "Ground floor off", "action": "light.turn_off",
+         "entityId": ["light.ground_floor"], "wires": [[]]},
         {"id": "s1", "type": "server", "name": "Home Assistant"},
     ]
     return {
@@ -72,6 +77,10 @@ def bundle() -> dict:
         "automations": [
             {"id": "1", "alias": "Café lights at sunset", "description": "Warm light when it gets dark ☀️",
              "triggers": [{"trigger": "sun", "event": "sunset"}], "actions": [{"action": "light.turn_on", "target": {"area_id": "cafe"}}]},
+            {"id": "4", "alias": "Café lights off when quiet", "description": "Fail-safe: off after 10 min without motion",
+             "triggers": [{"trigger": "state", "entity_id": "binary_sensor.cafe_motion", "to": "off", "for": {"minutes": 10}}],
+             "conditions": [{"condition": "state", "entity_id": "light.cafe", "state": "on"}],
+             "actions": [{"action": "light.turn_off", "target": {"area_id": "cafe"}}]},
             {"id": "3", "alias": "Notify Robin", "description": "Tell Robin the washing is done",
              "triggers": [{"trigger": "state", "entity_id": "sensor.washer", "to": "done"}],
              "actions": [{"action": "notify.notify", "data": {"message": "Done"}}]},
@@ -118,6 +127,13 @@ def main():
         check("automation lint catches the old-style automation", r.returncode == 1 and "Old style" in r.stdout, r.stdout)
         check("automation lint --baseline", run("tools/automation_lint.py", "--baseline", cwd=repo).returncode == 0)
         check("function lint --baseline", run("tools/function_lint.py", "--baseline", cwd=repo).returncode == 0)
+
+        r = run("tools/failsafes.py", "--off", "light.cafe", "area:cafe", cwd=repo)
+        check("failsafes finds the HA 'quiet for N min' switch-off", r.returncode == 0 and "Café lights off when quiet" in r.stdout, r.stdout + r.stderr)
+        r = run("tools/failsafes.py", "light.ground_floor", cwd=repo)
+        check("failsafes finds the Node-RED poll", r.returncode == 0 and "every 15 s" in r.stdout and "light.turn_off" in r.stdout, r.stdout + r.stderr)
+        r = run("tools/failsafes.py", "light.nothing_here", cwd=repo)
+        check("failsafes reports nothing for an unrelated entity", r.returncode == 0 and "No timed paths" in r.stdout, r.stdout)
 
         subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
         r = run("tools/validate.py", cwd=repo)
